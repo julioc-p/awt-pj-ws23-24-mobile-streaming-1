@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "@microsoft/signalr@latest",
+      "destination": "wwwroot/js/signalr",
+      "files": [
+        "dist/browser/signalr.js"
+      ]
+    }, 
+    {
+      "library": "chart.js@4.3.0",
+      "destination": "wwwroot/js/chartjs"
+    }
+  ]
+}

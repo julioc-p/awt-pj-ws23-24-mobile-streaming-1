@@ -1,27 +1,27 @@
-# Mobile Green Steaming
+# awt-pj-ws23-24-mobile-streaming-1
 
-## About The Project
+## current progress on demo
 
-With the rise of mobile streaming, understanding and optimizing the energy consumption of mobile devices during content playback is crucial for both user experience and sustainability. The project aims to investigate the availability of electricity consumption data on mobile devices and experiment with various options to reduce energy usage while maintaining a high-quality streaming experience.
+- [x] tested on macOS using Apple Silicon Mac
+- [x] tested on macOS using Intel Mac
+- [x] implemented for Windows devices (Intel)
+- [ ] implemented for Windows devices (AMD)
+- [x] tested on Windows
 
+## Build
 
-## Build Instructions
+Preparation:
 
-Pre-requisites:
-* Android SDK
-* To run command line tools, you'll need to configure Java: see [guide](https://github.com/mozilla-mobile/shared-docs/blob/master/android/configure_java.md).
+1. install dotnet 7
+2. make sure powermetrics (macOS) or Intel Power Gadget 3.6 (Windows/Intel) is installed
+3. make sure [libman](<https://learn.microsoft.com/en-us/aspnet/core/client-side/libman/libman-cli?view=aspnetcore-7.0>) is installed
+4. run `libman restore` to install missing packages
 
-1. Clone or Download the repository:
+MacOs
 
-  ```shell
-  git clone https://github.com/julioc-p/awt-pj-ws23-24-mobile-streaming-1
-  ```
+1. `dotnet run` in project directory
 
-2. **Import** the project into Android Studio **or** build on the command line:
+Windows (Intel)
 
-  ```shell
-  ./gradlew clean app:assembleDebug
-  ```
-
-If this errors out, make sure that you have an `ANDROID_SDK_ROOT` environment
-variable pointing to the right path.
+1. `dotnet restore` in project directory
+2. `dotnet run` in project directory
