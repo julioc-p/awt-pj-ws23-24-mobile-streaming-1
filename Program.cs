@@ -1,4 +1,4 @@
-using awt-pj-ws23-24-mobile-streaming-1.Hubs;
+using awt_pj_ss23_green_streaming_1.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 

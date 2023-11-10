@@ -6942,7 +6942,7 @@ function DashMetrics(config) {
       return [];
     }
 
-    return metrics.HttpList ? metrics.HttpList : [];
+    return !!metrics.HttpList ? metrics.HttpList : [];
   }
   /**
    * @param {MediaType} mediaType
@@ -9937,7 +9937,7 @@ function ServiceDescriptionController() {
     }
   }
 
-  
+  ;
   /**
    * Calculates offset to apply to live delay as described in TS 103 285 Clause 10.20.4
    * @param {object} sdLatency - service description latency element
@@ -38288,7 +38288,7 @@ function MediaPlayerModel() {
     return rate;
   }
 
-  
+  ;
   /**
    * Checks the supplied max playback rate is a valid vlaue and within supported limits
    * @param {number} rate - Supplied max playback rate 
@@ -38318,7 +38318,7 @@ function MediaPlayerModel() {
     return rate;
   }
 
-  
+  ;
   /**
    * Returns the maximum drift allowed before applying a seek back to the live edge when the catchup mode is enabled
    * @return {number}
@@ -53190,7 +53190,7 @@ function TextTracks(config) {
       }
     }
 
-    
+    ;
     return true;
   }
 
@@ -55247,7 +55247,7 @@ function CustomTimeRanges() {
     var i;
 
     for (i = 0; i < this.customTimeRangeArray.length && start > this.customTimeRangeArray[i].start; i++) {
-      
+      ;
     }
 
     this.customTimeRangeArray.splice(i, 0, {
@@ -66183,7 +66183,7 @@ function once(emitter, name) {
         emitter.removeListener('error', errorListener);
       }
       resolve([].slice.call(arguments));
-    }
+    };
 
     eventTargetAgnosticAddListener(emitter, name, resolver, { once: true });
     if (name !== 'error') {
@@ -66326,7 +66326,7 @@ module.exports = function equal(a, b) {
  * @module imscDoc
  */
 
-
+;
 (function (imscDoc, sax, imscNames, imscStyles, imscUtils) {
 
 
@@ -68195,7 +68195,7 @@ module.exports = function equal(a, b) {
  * @module imscHTML
  */
 
-
+;
 (function (imscHTML, imscNames, imscStyles) {
 
     /**
@@ -68573,7 +68573,7 @@ module.exports = function equal(a, b) {
 
                     applyTextEmphasis(context, e, isd_element, te);
 
-                }
+                };
 
             } else {
 
@@ -68601,7 +68601,7 @@ module.exports = function equal(a, b) {
 
                             applyTextEmphasis(context, span, isd_element, te);
 
-                        }
+                        };
     
                         e.appendChild(span);
 
@@ -70051,7 +70051,7 @@ module.exports = function equal(a, b) {
  */
 
 
-
+;
 (function (imscISD, imscNames, imscStyles, imscUtils) { // wrapper for non-node envs
 
     /** 
@@ -70927,7 +70927,7 @@ exports.renderHTML = __webpack_require__(/*! ./html */ "./node_modules/imsc/src/
  * @module imscNames
  */
 
-
+;
 (function (imscNames) { // wrapper for non-node envs
 
     imscNames.ns_tt = "http://www.w3.org/ns/ttml";
@@ -70984,7 +70984,7 @@ exports.renderHTML = __webpack_require__(/*! ./html */ "./node_modules/imsc/src/
  * @module imscStyles
  */
 
-
+;
 (function (imscStyles, imscNames, imscUtils) { // wrapper for non-node envs
 
     function StylingAttributeDefinition(ns, name, initialValue, appliesTo, isInherit, isAnimatable, parseFunc, computeFunc) {
@@ -72209,7 +72209,7 @@ exports.renderHTML = __webpack_require__(/*! ./html */ "./node_modules/imsc/src/
  * @module imscUtils
  */
 
-
+;
 (function (imscUtils) { // wrapper for non-node envs
 
     /* Documents the error handler interface */
@@ -73289,7 +73289,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   \*************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-(function (sax) { // wrapper for non-node envs
+;(function (sax) { // wrapper for non-node envs
   sax.parser = function (strict, opt) { return new SAXParser(strict, opt) }
   sax.SAXParser = SAXParser
   sax.SAXStream = SAXStream
@@ -76327,7 +76327,7 @@ function flow(stream) {
   debug('flow', state.flowing);
 
   while (state.flowing && stream.read() !== null) {
-    
+    ;
   }
 } // wrap an old-style stream as the async data source.
 // This is *not* part of the readable stream interface.
@@ -78338,7 +78338,7 @@ function _normalizeEncoding(enc) {
         retried = true;
     }
   }
-}
+};
 
 // Do not cache `Buffer.isEncoding` when checking encoding names as some
 // modules monkey-patch it to support additional encodings
@@ -78698,7 +78698,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;//////////////////////////////////////////////
 
                     matches = regex[j++].exec(ua);
 
-                    if (matches) {
+                    if (!!matches) {
                         for (p = 0; p < props.length; p++) {
                             match = matches[++k];
                             q = props[p];

@@ -1,7 +1,7 @@
-using awt-pj-ws23-24-mobile-streaming-1.Model;
+using awt_pj_ss23_green_streaming_1.Model;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace awt-pj-ws23-24-mobile-streaming-1.Pages;
+namespace awt_pj_ss23_green_streaming_1.Pages;
 
 public class DemoPageModel : PageModel
 {

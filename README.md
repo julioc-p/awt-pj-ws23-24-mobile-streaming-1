@@ -1,4 +1,4 @@
-# awt-pj-ws23-24-mobile-streaming-1
+# awt-pj-ss23-green-streaming-1
 
 ## current progress on demo
 
