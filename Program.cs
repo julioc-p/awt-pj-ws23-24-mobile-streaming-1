@@ -1,4 +1,5 @@
 using awt_pj_ss23_green_streaming_1.Hubs;
+using Microsoft.AspNetCore.StaticFiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,16 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+
+// it is needed to serve the static files with unkown types such as mpd
+app.UseStaticFiles(new StaticFileOptions
+{
+    ServeUnknownFileTypes = true,
+    ContentTypeProvider = new FileExtensionContentTypeProvider
+    {
+        Mappings = { { ".mpd", "application/dash+xml" } }
+    }
+});
 
 app.UseRouting();
 

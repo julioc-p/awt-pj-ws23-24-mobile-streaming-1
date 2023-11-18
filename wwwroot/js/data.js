@@ -134,7 +134,7 @@ function playbackPaused() {
 
 // init function to run on pageload 
 function init() {
-    var url = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
+    var url = "Manifest_MultiPeriod_1080p.mpd";
     var videoElement = document.querySelector(".videoContainer video");
     var player = dashjs.MediaPlayer().create();
     dashjsPlayer = player;
