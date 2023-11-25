@@ -99,7 +99,8 @@ public class MeasurementProcess
     public static async Task SaveMeasurements()
     {
         string path =
-            $"Measurements/data/measurement_{MeasurementProcess.StartTime.ToString("s")}.txt";
+            $"Measurements/data/measurement_{MeasurementProcess.StartTime.ToString("s")}.txt";           
+        path = path.Replace(":", "");
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         using (FileStream fs = File.Create(path))
         {
