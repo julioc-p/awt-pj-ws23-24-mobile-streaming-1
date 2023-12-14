@@ -7,57 +7,59 @@
 
  <Period duration="PT0H20M0.240S">
   <AdaptationSet maxWidth="3840" maxHeight="2160" maxFrameRate="25" par="16:9" lang="und" startWithSAP="1" subsegmentStartsWithSAP="1">
-   <Representation id="1" mimeType="video/mp4" codecs="avc1.640033" width="3840" height="2160" frameRate="25" sar="1:1" bandwidth="18282005">
+   <Representation id="1" mimeType="video/mp4" codecs="avc1.640028" width="1920" height="1080" frameRate="25" sar="1:1" bandwidth="3515346">
+		  <BaseURL>random_HD_25fps_05Mbps_H264_dashinit.mp4</BaseURL>
+		  <SegmentBase indexRangeExact="true" indexRange="15353-16836">
+			  <Initialization range="0-936"/>
+		  </SegmentBase>
+	  </Representation>
+   <Representation id="2" mimeType="video/mp4" codecs="avc1.640028" width="1920" height="1080" frameRate="25" sar="1:1" bandwidth="25007102">
+		  <BaseURL>random_HD_25fps_25Mbps_H264_dashinit.mp4</BaseURL>
+		  <SegmentBase indexRangeExact="true" indexRange="15353-16836">
+			  <Initialization range="0-936"/>
+		  </SegmentBase>
+	  </Representation>
+   <Representation id="3" mimeType="video/mp4" codecs="avc1.640033" width="3840" height="2160" frameRate="25" sar="1:1" bandwidth="56905">
+		  <BaseURL>random_4k_25fps_05Mbps_H264_dashinit.mp4</BaseURL>
+		  <SegmentBase indexRangeExact="true" indexRange="15332-16815">
+			  <Initialization range="0-915"/>
+		  </SegmentBase>
+	  </Representation>
+   <Representation id="4" mimeType="video/mp4" codecs="avc1.640033" width="3840" height="2160" frameRate="25" sar="1:1" bandwidth="18282005">
     <BaseURL>random_4k_25fps_25Mbps_H264_dashinit.mp4</BaseURL>
     <SegmentBase indexRangeExact="true" indexRange="15332-16815">
      <Initialization range="0-915"/>
     </SegmentBase>
    </Representation>
-   <Representation id="2" mimeType="video/mp4" codecs="avc1.640033" width="3840" height="2160" frameRate="25" sar="1:1" bandwidth="56905">
-    <BaseURL>random_4k_25fps_05Mbps_H264_dashinit.mp4</BaseURL>
-    <SegmentBase indexRangeExact="true" indexRange="15332-16815">
-     <Initialization range="0-915"/>
-    </SegmentBase>
-   </Representation>
-   <Representation id="3" mimeType="video/mp4" codecs="avc1.640028" width="1920" height="1080" frameRate="25" sar="1:1" bandwidth="25007102">
-    <BaseURL>random_HD_25fps_25Mbps_H264_dashinit.mp4</BaseURL>
-    <SegmentBase indexRangeExact="true" indexRange="15353-16836">
-     <Initialization range="0-936"/>
-    </SegmentBase>
-   </Representation>
-   <Representation id="4" mimeType="video/mp4" codecs="avc1.640028" width="1920" height="1080" frameRate="25" sar="1:1" bandwidth="3515346">
-    <BaseURL>random_HD_25fps_05Mbps_H264_dashinit.mp4</BaseURL>
-    <SegmentBase indexRangeExact="true" indexRange="15353-16836">
-     <Initialization range="0-936"/>
-    </SegmentBase>
-   </Representation>
+  
+   
   </AdaptationSet>
   <AdaptationSet maxWidth="3840" maxHeight="2160" maxFrameRate="25" par="16:9" lang="und" startWithSAP="1" subsegmentStartsWithSAP="1">
-	  
-   <Representation id="5" mimeType="video/mp4" codecs="hev1.1.6.L150.90" width="3840" height="2160" frameRate="25" sar="1:1" bandwidth="25066473">
+   <Representation id="6" mimeType="video/mp4" codecs="hev1.1.6.L120.90" width="1920" height="1080" frameRate="25" sar="1:1" bandwidth="4862952">
+		  <BaseURL>random_HD_25fps_05Mbps_H265_dashinit.mp4</BaseURL>
+		  <SegmentBase indexRangeExact="true" indexRange="15344-16815">
+			  <Initialization range="0-927"/>
+		  </SegmentBase>
+	  </Representation>
+   <Representation id="7" mimeType="video/mp4" codecs="hev1.1.6.H120.90" width="1920" height="1080" frameRate="25" sar="1:1" bandwidth="25000025">
+		  <BaseURL>random_HD_25fps_25Mbps_H265_dashinit.mp4</BaseURL>
+		  <SegmentBase indexRangeExact="true" indexRange="15344-16815">
+			  <Initialization range="0-927"/>
+		  </SegmentBase>
+	  </Representation>
+   <Representation id="8" mimeType="video/mp4" codecs="hev1.1.6.L150.90" width="3840" height="2160" frameRate="25" sar="1:1" bandwidth="5008236">
+		  <BaseURL>random_4k_25fps_05Mbps_H265_dashinit.mp4</BaseURL>
+		  <SegmentBase indexRangeExact="true" indexRange="15324-16807">
+			  <Initialization range="0-907"/>
+		  </SegmentBase>
+	  </Representation>
+   <Representation id="9" mimeType="video/mp4" codecs="hev1.1.6.L150.90" width="3840" height="2160" frameRate="25" sar="1:1" bandwidth="25066473">
 			 <BaseURL>random_4k_25fps_25Mbps_H265_dashinit.mp4</BaseURL>
 			 <SegmentBase indexRangeExact="true" indexRange="15324-16807">
 				 <Initialization range="0-907"/>
 			 </SegmentBase>
 		 </Representation>
-   <Representation id="6" mimeType="video/mp4" codecs="hev1.1.6.L150.90" width="3840" height="2160" frameRate="25" sar="1:1" bandwidth="5008236">
-			 <BaseURL>random_4k_25fps_05Mbps_H265_dashinit.mp4</BaseURL>
-			 <SegmentBase indexRangeExact="true" indexRange="15324-16807">
-				 <Initialization range="0-907"/>
-			 </SegmentBase>
-		 </Representation>
-   <Representation id="7" mimeType="video/mp4" codecs="hev1.1.6.H120.90" width="1920" height="1080" frameRate="25" sar="1:1" bandwidth="25000025">
-			 <BaseURL>random_HD_25fps_25Mbps_H265_dashinit.mp4</BaseURL>
-			 <SegmentBase indexRangeExact="true" indexRange="15344-16815">
-				 <Initialization range="0-927"/>
-			 </SegmentBase>
-		 </Representation>
-   <Representation id="8" mimeType="video/mp4" codecs="hev1.1.6.L120.90" width="1920" height="1080" frameRate="25" sar="1:1" bandwidth="4862952">
-			 <BaseURL>random_HD_25fps_05Mbps_H265_dashinit.mp4</BaseURL>
-			 <SegmentBase indexRangeExact="true" indexRange="15344-16815">
-				 <Initialization range="0-927"/>
-			 </SegmentBase>
-		 </Representation>
+  
   </AdaptationSet>
 
  </Period>
