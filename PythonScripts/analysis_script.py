@@ -29,11 +29,14 @@ for file in files:
 # Concatenate all data into a single DataFrame
 df = pd.concat(all_data, ignore_index=True)
 
+# Order resolutions on the x-axis
+resolutions_order = ['512x288', '640x360', '852x480', '1820x720', '1920x1080']
+
+# Convert 'Resolution' to a categorical type with the specified order
+df['Resolution'] = pd.Categorical(df['Resolution'], categories=resolutions_order, ordered=True)
+
 # Group by codec and resolution, calculate the average power consumption
 grouped_data = df.groupby(['Codec', 'Resolution']).mean().reset_index()
-
-# Order resolutions on the x-axis
-resolutions_order = sorted(grouped_data['Resolution'].unique())
 
 # Visualization: Average Power Consumption by Codec and Resolution
 plt.figure(figsize=(12, 6))
@@ -44,5 +47,5 @@ plt.xlabel('Resolution')
 plt.ylabel('Average Power Consumption')
 plt.title('Average Power Consumption by Codec and Resolution')
 plt.legend()
-plt.xticks(resolutions_order, rotation=45)  # Order resolutions and rotate labels
+plt.xticks(rotation=45)  # Rotate labels
 plt.show()
