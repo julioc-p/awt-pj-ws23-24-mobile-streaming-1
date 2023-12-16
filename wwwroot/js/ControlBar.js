@@ -822,7 +822,8 @@ var ControlBar = function (dashjsMediaPlayer, displayUTCTimeCodes) {
     };
 
     var setMenuItemsState = function (value, type) {
-        var streamInfo = self.player.getActiveStream().getStreamInfo();;
+        try {
+            var streamInfo = self.player.getActiveStream().getStreamInfo();;
         var dashAdapter = self.player.getDashAdapter();
         const periodIdx = streamInfo.index;
         var adaptation = dashAdapter.getAdaptationForType(periodIdx, 'video', streamInfo);
@@ -833,6 +834,12 @@ var ControlBar = function (dashjsMediaPlayer, displayUTCTimeCodes) {
         })
         var frameRate = currentRep.frameRate;
         console.log(frameRate)
+        console.log(currentRep)
+        console.log("---------------------------------------------------")
+        } catch (error) {
+            console.error(error);
+        }
+        
         try {
             var item = typeof value === 'number' ? document.getElementById(type + 'Item_' + value) : this;
             if (item) {
