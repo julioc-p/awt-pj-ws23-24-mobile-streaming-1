@@ -889,9 +889,29 @@ var ControlBar = function (dashjsMediaPlayer, displayUTCTimeCodes) {
                     }
                 }
             }
+            var streamInfo = self.player.getActiveStream().getStreamInfo();;
+            var dashAdapter = self.player.getDashAdapter();
+            const periodIdx = streamInfo.index;
+            var adaptation = dashAdapter.getAdaptationForType(periodIdx, 'video', streamInfo);
+            var dashMetrics = self.player.getDashMetrics();
+            var repSwitch = dashMetrics.getCurrentRepresentationSwitch('video', true);
+            var currentRep = adaptation.Representation_asArray.find(function (rep) {
+                return rep.id === repSwitch.to
+            })
+            var frameRate = currentRep.frameRate;
+            console.log("framerate: " + frameRate)
+
+            //const activeRepresentation = self.player.getCurrentRepresentation();
+
+            //const baseURL = activeRepresentation.BaseURL;
+            //console.log('Currently playing BaseURL:', baseURL);
+
+    
         } catch (e) {
             console.error(e);
         }
+
+       
     };
 
     var handleMenuPositionOnResize = function (/*e*/) {
