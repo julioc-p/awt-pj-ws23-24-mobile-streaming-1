@@ -1,51 +1,46 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-# Assuming all combination files are in the same folder
-folder_path = '../Measurements/data'
+# Path to the directory containing the data files
+data_directory = '../Measurements/data'
 
-# List all files in the folder
-files = [f for f in os.listdir(folder_path) if f.startswith('measurement_') and f.endswith('.txt')]
+# Function to read and process a single data file
+def process_data(file_path):
+    df = pd.read_csv(file_path, delimiter=';')
+    avg_power = df[df['VideoPlaying'] == True]['TotalPower'].mean()
+    return avg_power
 
-# Create an empty DataFrame to store the data
+# Process all data files in the directory
 all_data = []
+for filename in os.listdir(data_directory):
+    if filename.startswith('random'):
+        file_path = os.path.join(data_directory, filename)
+        settings = filename.split('_')[1:]  # Extracting codec, resolution, bitrate, fps from filename
+        settings_str = '_'.join(settings)
+        avg_power = process_data(file_path)
+        all_data.append({'Settings': settings_str, 'TotalPower': avg_power})
 
-# Read each file and append the data to the DataFrame
-for file in files:
-    data = pd.read_csv(os.path.join(folder_path, file), sep=";")
-    
-    # Extract codec and resolution from the file name
-    _, timestamp, resolution, codec = file.split('_')
-    
-    # Create new columns for codec and resolution
-    data['Codec'] = codec.split('.')[0]
-    data['Resolution'] = resolution.strip('()')  # Remove parentheses
-    data['Timestamp'] = pd.to_datetime(data['Timestamp'])  # Convert 'Timestamp' to datetime format
-    
-    # Append data to the list
-    all_data.append(data)
+# Create DataFrame from the list of dictionaries
+result_df = pd.DataFrame(all_data)
 
-# Concatenate all data into a single DataFrame
-df = pd.concat(all_data, ignore_index=True)
+# Extract individual settings into separate columns
+result_df[['Codec', 'Resolution', 'Bitrate', 'FPS']] = result_df['Settings'].str.split('_', expand=True)
 
-# Order resolutions on the x-axis
-resolutions_order = ['512x288', '640x360', '852x480', '1820x720', '1920x1080']
+# Define custom sorting order for 'Resolution' column
+resolution_order = ['HD', '4K']
+result_df['Resolution'] = pd.Categorical(result_df['Resolution'], categories=resolution_order, ordered=True)
 
-# Convert 'Resolution' to a categorical type with the specified order
-df['Resolution'] = pd.Categorical(df['Resolution'], categories=resolutions_order, ordered=True)
+# Sort DataFrame by 'Resolution' and 'Bitrate'
+result_df = result_df.sort_values(by=['Resolution', 'Bitrate'])
 
-# Group by codec and resolution, calculate the average power consumption
-grouped_data = df.groupby(['Codec', 'Resolution']).mean().reset_index()
-
-# Visualization: Average Power Consumption by Codec and Resolution
-plt.figure(figsize=(12, 6))
-for codec, group in grouped_data.groupby('Codec'):
-    plt.plot(group['Resolution'], group['TotalPower'], label=codec, marker='o')
-
-plt.xlabel('Resolution')
+# Plotting using seaborn
+plt.figure(figsize=(16, 8))  # Increase the width of the plot
+sns.barplot(x='Settings', y='TotalPower', data=result_df)
+plt.title('Average Power Consumption for Different Settings')
+plt.xlabel('Settings (Codec_Resolution_Bitrate_FPS)')
 plt.ylabel('Average Power Consumption')
-plt.title('Average Power Consumption by Codec and Resolution')
-plt.legend()
-plt.xticks(rotation=45)  # Rotate labels
+plt.xticks(rotation=45, ha='right')  # Adjust rotation and horizontal alignment
+plt.tight_layout()  # Ensure proper layout
 plt.show()
