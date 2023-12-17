@@ -32,6 +32,21 @@ def process_file(file_path):
     sum_power = df['TotalPower'].sum()
     return sum_power, len(df)
 
+def plot_bitrate_vs_power(codec, bitrates, sum_powers):
+    for bitrate in bitrates:
+        sum_bitrate = 0
+        num_data_points = 0
+        for power, data_points in sum_powers[(codec, bitrate)]:
+            sum_bitrate += power
+            num_data_points += data_points
+        plt.bar(bitrate, (sum_bitrate / num_data_points), label=f'{bitrate}')
+
+    plt.xlabel('Bitrate')
+    plt.ylabel('Average Power Consumption')
+    plt.title(f'Average Power Consumption for {codec} at Different Bitrates')
+    plt.legend()
+    plt.show()
+
 def plot_avg_power(data_combinations, sum_powers, x_label, plot_title):
     data_combinations = sorted(data_combinations)
     for combination in data_combinations:
@@ -47,6 +62,7 @@ def plot_avg_power(data_combinations, sum_powers, x_label, plot_title):
     plt.title(plot_title)
     plt.legend()
     plt.show()
+
 
 def generate_insight_by_settings(data_directory):
     def filename_condition(filename):
@@ -71,6 +87,7 @@ def generate_insight_by_resolution(data_directory):
     plot_avg_power(resolutions, sum_powers, 'Resolution',
                    'Average Power Consumption for Different Resolutions')
 
+
 def generate_insight_by_codec_bitrate(data_directory):
     def filename_condition(filename):
         codec, bitrate = filename.split('_')[3:5]
@@ -83,6 +100,18 @@ def generate_insight_by_codec_bitrate(data_directory):
     plot_avg_power(codec_bitrate_combinations, sum_powers, 'Codec x Bitrate',
                    'Average Power Consumption for Different Codec x Bitrate Combinations')
 
+# write a method to generate insights by bitrate
+def generate_insight_by_bitrate(data_directory):
+    def filename_condition(filename):
+        return filename.split('_')[3]
+
+    # Process files in the given directory
+    bitrates, sum_powers = process_directory(data_directory, filename_condition)
+
+    # Plot the average power for each resolution
+    plot_avg_power(bitrates, sum_powers, 'Resolution',
+                   'Average Power Consumption for Different Bitrates')
+
 if __name__ == "__main__":
     # Path to the directory containing the data files
     data_directory = '../Measurements/data'
@@ -91,3 +120,4 @@ if __name__ == "__main__":
     generate_insight_by_settings(data_directory)
     generate_insight_by_resolution(data_directory)
     generate_insight_by_codec_bitrate(data_directory)
+    generate_insight_by_bitrate(data_directory)
