@@ -4,6 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 wwwroot/js/chartjs/*
+wwwroot/content/*
 Measurements/*
 # User-specific files
 *.suo

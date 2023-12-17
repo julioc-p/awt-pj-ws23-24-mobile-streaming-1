@@ -135,7 +135,7 @@ function playbackPaused() {
 // init function to run on pageload 
 function init() {
     // https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod.mpd
-    var url = "content/random.mpd";
+    var url = "content/gray.mpd";
     var videoElement = document.querySelector(".videoContainer video");
     var player = dashjs.MediaPlayer().create();
     dashjsPlayer = player;
