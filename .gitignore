@@ -294,3 +294,6 @@ __pycache__/
 
 # video files
 *.mp4
+
+# mpd files
+*.mpd
