@@ -52,6 +52,10 @@ var dashjsPlayer;
 const startMeasurementButton = document.getElementById("startMeasurementButton");
 startMeasurementButton.disabled = true;
 
+// disable stop analytics button before
+const stopAnalyticsButton = document.getElementById("stopAnalyticsButton");
+stopAnalyticsButton.disabled = true;
+
 // when event "ReceiveMeasurement" occurs it updates the powerConsumption text field and adds the value to the dataList text field
 connectionMeasurementHub.on("ReceiveMeasurement", function (totalPower, timeSinceStart) {
     // console.log(totalPower);
@@ -67,7 +71,7 @@ connectionMeasurementHub.on("ReceiveMeasurement", function (totalPower, timeSinc
 // start connection to measurementHub and if successful enable startMeasurementButton
 connectionMeasurementHub.start().then(function () {
     startMeasurementButton.disabled = false;
-    
+
 }).catch(function (err) {
     return console.error(err.toString());
 });
@@ -83,7 +87,7 @@ startMeasurementButton.addEventListener("click", function (event) {
         .send("StartMeasurement")
         .catch(function (err) {
             console.error(err.toString());
-    });
+        });
     event.preventDefault();
 });
 document.getElementById("clearMeasurementsButton").addEventListener("click", function (event) {
@@ -98,18 +102,63 @@ document.getElementById("saveMeasurementsButton").addEventListener("click", func
     connectionMeasurementHub.invoke("SaveMeasurements").catch(function (err) { console.error(err.toString()) });
 })
 
+
+
 var numberOfMeasurementsForm = document.getElementById("numberOfMeasurementsForm");
 numberOfMeasurementsForm.addEventListener('submit', function (event) {
     event.preventDefault();
     // if (!numberOfMeasurementsForm.checkValidity()) {
-        event.stopPropagation();
+    event.stopPropagation();
     // }
-    numberOfMeasurementsForm.classList.add('was-validated'); 
+    numberOfMeasurementsForm.classList.add('was-validated');
     if (numberOfMeasurementsForm.checkValidity()) {
         var inputField = document.getElementById("numberOfMeasurementsInput");
         connectionMeasurementHub.invoke("SaveNumberOfMeasurements", Number(inputField.value));
     }
 }, false)
+
+document.getElementById("startAnalyticsButton").addEventListener("click", function (event) {
+    // disable all buttons of the ui except for the stopAnalyticsButton
+    document.getElementById("startAnalyticsButton").disabled = true;
+    document.getElementById("startAnalyticsButton").disabled = true;
+    document.getElementById("startMeasurementButton").disabled = true;
+    document.getElementById("clearMeasurementsButton").disabled = true;
+    document.getElementById("saveMeasurementsButton").disabled = true;
+    document.getElementById("numberOfMeasurementsInput").disabled = true;
+    document.getElementById("settingsButton").disabled = true;
+
+    // disable all ways of user to interact with dash player, just keep playing videos
+    document.getElementById("videoController").style.pointerEvents = 'none';
+    document.getElementById("videoControllerWrapper").style.cursor = 'not-allowed';
+
+    // disable navbar
+    document.getElementById("navbarMain").style.pointerEvents = 'none';
+    document.getElementById("mainNavbarWrapper").style.cursor = 'not-allowed';
+
+    stopAnalyticsButton.disabled = false;
+
+});
+
+// when stopAnalyticsButton is clicked, enable all buttons of the ui except for the stopAnalyticsButton
+stopAnalyticsButton.addEventListener("click", function (event) {
+    document.getElementById("startAnalyticsButton").disabled = false;
+    document.getElementById("startMeasurementButton").disabled = false;
+    document.getElementById("clearMeasurementsButton").disabled = false;
+    document.getElementById("saveMeasurementsButton").disabled = false;
+    document.getElementById("numberOfMeasurementsInput").disabled = false;
+    document.getElementById("settingsButton").disabled = false;
+
+    // enable all ways of user to interact with dash player, just keep playing videos
+    document.getElementById("videoController").style.pointerEvents = 'auto';
+    document.getElementById("videoControllerWrapper").style.cursor = 'auto';
+
+    // enable navbar
+    document.getElementById("navbarMain").style.pointerEvents = 'auto';
+    document.getElementById("mainNavbarWrapper").style.cursor = 'auto';
+
+    stopAnalyticsButton.disabled = true;
+});
+
 
 // helper functions to send changes in playback state to server
 function playbackStarted() {
@@ -135,7 +184,7 @@ function playbackPaused() {
 // init function to run on pageload 
 function init() {
     // https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod.mpd
-    var url = "content/gray.mpd";
+    var url = "https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod.mpd";
     var videoElement = document.querySelector(".videoContainer video");
     var player = dashjs.MediaPlayer().create();
     dashjsPlayer = player;

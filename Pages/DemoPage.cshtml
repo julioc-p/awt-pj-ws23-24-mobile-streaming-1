@@ -5,115 +5,115 @@
 }
 
 <html>
-  <head>
+<head>
     <script src="~/js/chartjs/dist/chart.umd.js"></script>
-  </head>
+</head>
 
-  <body>
+<body>
     <div class="container">
-      <div class="row">
-        <div class="dash-video-player">
-          <div class="videoContainer" id="videoContainer" >
-            <video preload="auto" autoplay="" ></video>
-            <div id="videoController" class="video-controller unselectable">
-              <div id="playPauseBtn" class="btn-play-pause" title="Play/Pause">
-                <span id="iconPlayPause" class="icon-play"></span>
-              </div>
-              <span id="videoTime" class="time-display">00:00:00</span>
-              <div
-                id="fullscreenBtn"
-                class="btn-fullscreen control-icon-layout"
-                title="Fullscreen"
-              >
-                <span class="icon-fullscreen-enter"></span>
-              </div>
-              <div
-                id="bitrateListBtn"
-                class="control-icon-layout"
-                title="Bitrate List"
-              >
-                <span class="icon-bitrate"></span>
-              </div>
-              <input
-                type="range"
-                id="volumebar"
-                class="volumebar"
-                value="1"
-                min="0"
-                max="1"
-                step=".01"
-              />
-              <div id="muteBtn" class="btn-mute control-icon-layout" title="Mute">
-                <span id="iconMute" class="icon-mute-off"></span>
-              </div>
-              <div
-                id="trackSwitchBtn"
-                class="control-icon-layout"
-                title="A/V Tracks"
-              >
-                <span class="icon-tracks"></span>
-              </div>
-              <div
-                id="captionBtn"
-                class="btn-caption control-icon-layout"
-                title="Closed Caption"
-              >
-                <span class="icon-caption"></span>
-              </div>
-              <span id="videoDuration" class="duration-display">00:00:00</span>
-              <div class="seekContainer">
-                <div id="seekbar" class="seekbar seekbar-complete">
-                  <div id="seekbar-buffer" class="seekbar seekbar-buffer"></div>
-                  <div id="seekbar-play" class="seekbar seekbar-play"></div>
+        <div class="row">
+            <div class="dash-video-player">
+
+                <div class="videoContainer" id="videoContainer">
+                    <video preload="auto" autoplay=""></video>
+                    <div id="videoControllerWrapper">
+                        <div id="videoController" class="video-controller unselectable">
+                            <div id="playPauseBtn" class="btn-play-pause" title="Play/Pause">
+                                <span id="iconPlayPause" class="icon-play"></span>
+                            </div>
+                            <span id="videoTime" class="time-display">00:00:00</span>
+                            <div id="fullscreenBtn"
+                                 class="btn-fullscreen control-icon-layout"
+                                 title="Fullscreen">
+                                <span class="icon-fullscreen-enter"></span>
+                            </div>
+                            <div id="bitrateListBtn"
+                                 class="control-icon-layout"
+                                 title="Bitrate List">
+                                <span class="icon-bitrate"></span>
+                            </div>
+                            <input type="range"
+                                   id="volumebar"
+                                   class="volumebar"
+                                   value="1"
+                                   min="0"
+                                   max="1"
+                                   step=".01" />
+                            <div id="muteBtn" class="btn-mute control-icon-layout" title="Mute">
+                                <span id="iconMute" class="icon-mute-off"></span>
+                            </div>
+                            <div id="trackSwitchBtn"
+                                 class="control-icon-layout"
+                                 title="A/V Tracks">
+                                <span class="icon-tracks"></span>
+                            </div>
+                            <div id="captionBtn"
+                                 class="btn-caption control-icon-layout"
+                                 title="Closed Caption">
+                                <span class="icon-caption"></span>
+                            </div>
+                            <span id="videoDuration" class="duration-display">00:00:00</span>
+                            <div class="seekContainer">
+                                <div id="seekbar" class="seekbar seekbar-complete">
+                                    <div id="seekbar-buffer" class="seekbar seekbar-buffer"></div>
+                                    <div id="seekbar-play" class="seekbar seekbar-play"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="row g-0">
-        <div class="col-8">
-        <div class="btn-toolbar mb-3 mr-0" role="toolbar">
-          <div class="btn-group mr-0" >
-              <button type="button" class="btn btn-primary mr-2 ml-2" id="startMeasurementButton" >Start Measurements</button>
-              <button type="button" class="btn btn-danger mr-2 ml-2 shadow-none" id="clearMeasurementsButton" >Clear Measurements</button>
-              <button type="button" class="btn btn-success mr-2 ml-2 shadow-none" id="saveMeasurementsButton" >Save Measurements</button>
-              <button type="button" class="btn btn-dark btn-sm mr-0 ml-1 shadow-none" data-bs-toggle="collapse" data-bs-target="#numberOfMeasurementsInputGroupCollapse" id="settingsButton">&#9881;</button>
-          </div>
-        </div>
-        </div>
-        <div class="col-4 ml-0">
-          <form id="numberOfMeasurementsForm" novalidate>
-          <div class="collapse col-auto" id="numberOfMeasurementsInputGroupCollapse">
-            <div class="input-group has-validation">
-              <div class="input-group-prepend">
-                <div class="input-group-text" >Number of measurements</div>
-              </div>
-              <input type="number" id="numberOfMeasurementsInput" class="form-control " min="1" value="20" step="1" required>
-              <div class="invalid-feedback">Please enter a positive integer</div>
-              <div class="input-group-append">
-                <button type="submit" class="btn btn-secondary" id="numberOfMeasurementsSaveButton">Save</button>
-              </div>
+            <div class="row g-0">
+                <div class="col-8">
+                    <div class="btn-toolbar mb-3 mr-0" role="toolbar">
+                        <div class="btn-group mr-0">
+                            <button type="button" class="btn btn-primary mr-2 ml-2" id="startMeasurementButton">Start Measurements</button>
+                            <button type="button" class="btn btn-danger mr-2 ml-2 shadow-none" id="clearMeasurementsButton">Clear Measurements</button>
+                            <button type="button" class="btn btn-success mr-2 ml-2 shadow-none" id="saveMeasurementsButton">Save Measurements</button>
+                            <button type="button" class="btn btn-dark btn-sm mr-0 ml-1 shadow-none" data-bs-toggle="collapse" data-bs-target="#numberOfMeasurementsInputGroupCollapse" id="settingsButton">&#9881;</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4 ml-0">
+                    <form id="numberOfMeasurementsForm" novalidate>
+                        <div class="collapse col-auto" id="numberOfMeasurementsInputGroupCollapse">
+                            <div class="input-group has-validation">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Number of measurements</div>
+                                </div>
+                                <input type="number" id="numberOfMeasurementsInput" class="form-control " min="1" value="20" step="1" required>
+                                <div class="invalid-feedback">Please enter a positive integer</div>
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-secondary" id="numberOfMeasurementsSaveButton">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
             </div>
-          </div>
-          </form>
-        </div>
-      </div>
-      <div class="row">
-        <div class="chart-container" style="position: relative; height:40vh; width:80vw;">
-          <canvas id="myChart"></canvas>
-        </div>
-      </div>
-    </div>
-    <script src="~/js/signalr/dist/browser/signalr.js"></script>
-    <script src="~/js/dash.all.debug.js"></script>
-    <script src="~/js/ControlBar.js"></script>
-    <script src="~/js/data.js"></script>
-    <link rel="stylesheet" href="~/css/controlbar.css" />
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        init();
-      });
-    </script>
-  </body>
+            <div class="row">
+                <div class="chart-container" style="position: relative; height:40vh; width:80vw;">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="btn-toolbar mb-3 mr-0" role="toolbar">
+                    <div class="btn-group mr-0">
+                        <button type="button" class="btn btn-primary mr-2 ml-2" id="startAnalyticsButton">Start Analytics</button>
+                        <button type="button" class="btn btn-danger mr-2 ml-2 shadow-none" id="stopAnalyticsButton">Stop Analytics</button>
+                    </div>
+                </div>
+            </div>
+            <script src="~/js/signalr/dist/browser/signalr.js"></script>
+            <script src="~/js/dash.all.debug.js"></script>
+            <script src="~/js/ControlBar.js"></script>
+            <script src="~/js/data.js"></script>
+            <link rel="stylesheet" href="~/css/controlbar.css" />
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    init();
+                });
+            </script>
+</body>
 </html>
