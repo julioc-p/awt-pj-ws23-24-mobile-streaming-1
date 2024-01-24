@@ -126,6 +126,7 @@ document.getElementById("startAnalyticsButton").addEventListener("click", functi
     document.getElementById("saveMeasurementsButton").disabled = true;
     document.getElementById("numberOfMeasurementsInput").disabled = true;
     document.getElementById("settingsButton").disabled = true;
+    document.getElementById("videoUrlsButton").disabled = true;
 
     // disable all ways of user to interact with dash player, just keep playing videos
     document.getElementById("videoController").style.pointerEvents = 'none';
@@ -155,6 +156,7 @@ function enableUI() {
     document.getElementById("saveMeasurementsButton").disabled = false;
     document.getElementById("numberOfMeasurementsInput").disabled = false;
     document.getElementById("settingsButton").disabled = false;
+    document.getElementById("videoUrlsButton").disabled = false;
 
     // enable all ways of user to interact with dash player, just keep playing videos
     document.getElementById("videoController").style.pointerEvents = 'auto';

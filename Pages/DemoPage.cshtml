@@ -102,9 +102,24 @@
                     <div class="btn-group mr-0">
                         <button type="button" class="btn btn-primary mr-2 ml-2" id="startAnalyticsButton">Start Analytics</button>
                         <button type="button" class="btn btn-danger mr-2 ml-2 shadow-none" id="stopAnalyticsButton">Stop Analytics</button>
+                        <button type="button" class="btn btn-dark btn-sm mr-0 ml-1 shadow-none" id="videoUrlsButton">&#9881;</button>
                     </div>
                 </div>
             </div>
+            @*<form id="videoUrlsEnterForm" novalidate>
+                <div class="collapse col-auto" id="videoUrlsInputGroupCollapse">
+                    <div class="input-group has-validation">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Number of measurements</div>
+                        </div>
+                        <input type="number" id="numberOfMeasurementsInput" class="form-control " min="1" value="20" step="1" required>
+                        <div class="invalid-feedback">Please enter a positive integer</div>
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-secondary" id="numberOfMeasurementsSaveButton">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </form>*@
             <script src="~/js/signalr/dist/browser/signalr.js"></script>
             <script src="~/js/dash.all.debug.js"></script>
             <script src="~/js/ControlBar.js"></script>
