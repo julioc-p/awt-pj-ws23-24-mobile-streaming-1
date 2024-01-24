@@ -193,6 +193,7 @@ async function startPlaybackWithAllSettings() {
 async function playAllRepresentations(adaptationSet, abrConfig) {
     const representations = adaptationSet.bitrateList;
     dashjsPlayer.setCurrentTrack(adaptationSet);
+    dashjsPlayer.seek(0);
 
     //console.log(representations);
 
