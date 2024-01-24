@@ -136,11 +136,19 @@ document.getElementById("startAnalyticsButton").addEventListener("click", functi
     document.getElementById("mainNavbarWrapper").style.cursor = 'not-allowed';
 
     stopAnalyticsButton.disabled = false;
+    startPlaybackWithAllSettings()
 
 });
 
 // when stopAnalyticsButton is clicked, enable all buttons of the ui except for the stopAnalyticsButton
 stopAnalyticsButton.addEventListener("click", function (event) {
+    enableUI();
+    stopPlayback();
+
+});
+
+// method to enable all ui clickable elements
+function enableUI() {
     document.getElementById("startAnalyticsButton").disabled = false;
     document.getElementById("startMeasurementButton").disabled = false;
     document.getElementById("clearMeasurementsButton").disabled = false;
@@ -157,7 +165,87 @@ stopAnalyticsButton.addEventListener("click", function (event) {
     document.getElementById("mainNavbarWrapper").style.cursor = 'auto';
 
     stopAnalyticsButton.disabled = true;
-});
+}
+
+
+// method to start playback of with all the different settings in the mpd file. the different resolutions, bitrates, etc.
+async function startPlaybackWithAllSettings() {
+    const adaptationSets = dashjsPlayer.getTracksFor("video");
+    const abrConfig = {
+        'streaming': {
+            'abr': {
+                'autoSwitchBitrate': {
+                    'video': false
+                }
+            }
+        }
+    };
+
+    //console.log(adaptationSets);
+
+    for (const adaptationSet of adaptationSets) {
+        await playAllRepresentations(adaptationSet, abrConfig);
+    }
+
+    enableUI();
+}
+
+async function playAllRepresentations(adaptationSet, abrConfig) {
+    const representations = adaptationSet.bitrateList;
+    dashjsPlayer.setCurrentTrack(adaptationSet);
+
+    //console.log(representations);
+
+
+    for (var j = 0; j < representations.length; j++) {
+        //console.log(representations[j]);
+        await playRepresentation(j, abrConfig);
+    }
+}
+
+async function playRepresentation(representationIndex, abrConfig) {
+    
+    try {
+        // Use a promise to wait for the PLAYBACK_ENDED event
+        const playbackEndedPromise = new Promise(resolve => {
+            function playbackEndedHandler() {
+                dashjsPlayer.off(dashjs.MediaPlayer.events.PLAYBACK_ENDED, playbackEndedHandler);
+                resolve();
+            }
+            dashjsPlayer.on(dashjs.MediaPlayer.events.PLAYBACK_ENDED, playbackEndedHandler);
+        });
+
+        // Update settings and start playback
+        dashjsPlayer.updateSettings(abrConfig);
+        dashjsPlayer.setQualityFor("video", representationIndex, true);
+        startPlayback();
+
+        // Wait for the PLAYBACK_ENDED event
+        await playbackEndedPromise;
+    } catch (error) {
+        console.error("An error occurred during playback:", error);
+    } finally {
+        // Stop playback regardless of success or failure
+        stopPlayback();
+    }
+}
+
+// Utility function to simulate asynchronous behavior (sleep)
+//function sleep(ms) {
+//    return new Promise(resolve => setTimeout(resolve, ms));
+//}
+
+
+
+// method to start playback
+function startPlayback() {
+    dashjsPlayer.play();
+}
+
+// method to stop playback
+function stopPlayback() {
+    dashjsPlayer.pause();
+}
 
 
 // helper functions to send changes in playback state to server
@@ -184,7 +272,7 @@ function playbackPaused() {
 // init function to run on pageload 
 function init() {
     // https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod.mpd
-    var url = "https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod.mpd";
+    var url = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
     var videoElement = document.querySelector(".videoContainer video");
     var player = dashjs.MediaPlayer().create();
     dashjsPlayer = player;
