@@ -3,6 +3,7 @@
 // build connection to server
 const connectionMeasurementHub = new signalR.HubConnectionBuilder().withUrl("/measurementHub").build();
 const connectionPlaybackHub = new signalR.HubConnectionBuilder().withUrl("/playbackHub").build();
+const connectionPythonScriptHub = new signalR.HubConnectionBuilder().withUrl("/pythonScriptHub").build();
 
 // chart config
 const ctx = document.getElementById('myChart');
@@ -77,6 +78,12 @@ connectionPlaybackHub.start().catch(function (err) {
     return console.error(err.toString());
 })
 
+//start connection to pythonScriptHub
+connectionPythonScriptHub.start().catch(function (err) {
+    console.log("connection to pyhub started")
+    return console.error(err.toString());
+})
+
 // bind buttons on webpage to class functions on backend
 startMeasurementButton.addEventListener("click", function (event) {
     connectionMeasurementHub
@@ -97,6 +104,25 @@ document.getElementById("clearMeasurementsButton").addEventListener("click", fun
 document.getElementById("saveMeasurementsButton").addEventListener("click", function (event) {
     connectionMeasurementHub.invoke("SaveMeasurements").catch(function (err) { console.error(err.toString()) });
 })
+//function called when button to trigger python is called, later replaced by an event triggering when data measurements are done
+document.getElementById("pythonButton").addEventListener("click", function (event) {
+    console.log("button clicked!");
+    connectionPythonScriptHub.invoke("ExecutePythonScript").catch(function (err) {
+        console.error(err.toString());
+    });
+})
+
+// Listen for Python script output
+connection.on("PythonScriptOutput", function (output) {
+    console.log("Python Script Output:", output);
+    // Handle the output as needed
+});
+
+// Listen for Python script errors
+connection.on("PythonScriptError", function (error) {
+    console.error("Python Script Error:", error);
+    // Handle the error as needed
+});
 
 var numberOfMeasurementsForm = document.getElementById("numberOfMeasurementsForm");
 numberOfMeasurementsForm.addEventListener('submit', function (event) {
@@ -132,10 +158,11 @@ function playbackPaused() {
         });
 }
 
+
 // init function to run on pageload 
 function init() {
     // https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod.mpd
-    var url = "content/gray.mpd";
+    var url = "content/random.mpd";
     var videoElement = document.querySelector(".videoContainer video");
     var player = dashjs.MediaPlayer().create();
     dashjsPlayer = player;
