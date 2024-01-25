@@ -119,14 +119,16 @@ numberOfMeasurementsForm.addEventListener('submit', function (event) {
 
 document.getElementById("startAnalyticsButton").addEventListener("click", function (event) {
     // disable all buttons of the ui except for the stopAnalyticsButton
-    document.getElementById("startAnalyticsButton").disabled = true;
-    document.getElementById("startAnalyticsButton").disabled = true;
-    document.getElementById("startMeasurementButton").disabled = true;
-    document.getElementById("clearMeasurementsButton").disabled = true;
-    document.getElementById("saveMeasurementsButton").disabled = true;
-    document.getElementById("numberOfMeasurementsInput").disabled = true;
-    document.getElementById("settingsButton").disabled = true;
-    document.getElementById("videoUrlsButton").disabled = true;
+
+    var allButtons = document.querySelectorAll('button');
+    allButtons.forEach(function (button) {
+        button.disabled = true;
+    });
+
+    var allInputs = document.querySelectorAll('input');
+    allInputs.forEach(function (input) {
+        input.disabled = true;
+    });
 
     // disable all ways of user to interact with dash player, just keep playing videos
     document.getElementById("videoController").style.pointerEvents = 'none';
@@ -143,6 +145,7 @@ document.getElementById("startAnalyticsButton").addEventListener("click", functi
 
 // when stopAnalyticsButton is clicked, enable all buttons of the ui except for the stopAnalyticsButton
 stopAnalyticsButton.addEventListener("click", function (event) {
+    dashjsPlayer.seek(0);
     enableUI();
     stopPlayback();
 
@@ -150,13 +153,16 @@ stopAnalyticsButton.addEventListener("click", function (event) {
 
 // method to enable all ui clickable elements
 function enableUI() {
-    document.getElementById("startAnalyticsButton").disabled = false;
-    document.getElementById("startMeasurementButton").disabled = false;
-    document.getElementById("clearMeasurementsButton").disabled = false;
-    document.getElementById("saveMeasurementsButton").disabled = false;
-    document.getElementById("numberOfMeasurementsInput").disabled = false;
-    document.getElementById("settingsButton").disabled = false;
-    document.getElementById("videoUrlsButton").disabled = false;
+    var allButtons = document.querySelectorAll('button');
+    allButtons.forEach(function (button) {
+        button.disabled = false;
+    });
+
+    var allInputs = document.querySelectorAll('input');
+    allInputs.forEach(function (input) {
+        input.disabled = false;
+    });
+
 
     // enable all ways of user to interact with dash player, just keep playing videos
     document.getElementById("videoController").style.pointerEvents = 'auto';
@@ -272,6 +278,81 @@ function playbackPaused() {
         });
 }
 
+function restartVideo(videoURL) {
+    // Set the new video source
+    player.attachSource(videoURL);
+
+    // Set the playback position to the beginning (time 0)
+    player.seek(0);
+}
+
+var uniqueURLs = new Set();
+
+// Function to save video URL
+function saveVideoUrl() {
+    var videoURLInput = document.getElementById('videoUrl');
+    var videoURL = videoURLInput.value;
+
+    if (isValidURL(videoURL)) {
+        addURLToList(videoURL);
+        videoURLInput.value = '';
+    } else {
+        videoURLInput.setCustomValidity('Please enter a valid URL');
+        videoURLInput.reportValidity();
+    }
+}
+
+// Function to check if a string is a valid URL
+function isValidURL(url) {
+    try {
+        new URL(url);
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+// Function to add URL to the list
+function addURLToList(url) {
+    var urlList = document.getElementById('urlList');
+
+    if (uniqueURLs.has(url)) {
+        alert('This URL is already in the list.');
+        return;
+    }
+
+    var listItem = document.createElement('li');
+    listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+    var deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.className = 'btn btn-danger btn-sm';
+    deleteButton.onclick = function () {
+        urlList.removeChild(listItem);
+        uniqueURLs.delete(url);
+        checkDisplay();
+    };
+
+    var textSpan = document.createElement('span');
+    textSpan.textContent = url;
+    textSpan.style.marginRight = '10px';
+
+    listItem.appendChild(textSpan);
+    listItem.appendChild(deleteButton);
+
+    urlList.appendChild(listItem);
+
+    uniqueURLs.add(url);
+
+    checkDisplay();
+}
+
+// Function to check and toggle the display of the list container
+function checkDisplay() {
+    var videoUrlList = document.getElementById('videoUrlList');
+    var displayValue = uniqueURLs.size > 0 ? 'block' : 'none';
+    videoUrlList.style.display = displayValue;
+}
 // init function to run on pageload 
 function init() {
     // https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod.mpd
