@@ -32,7 +32,7 @@ def process_file(file_path):
     sum_power = df['TotalPower'].sum()
     return sum_power, len(df)
 
-def plot_bitrate_vs_power(codec, bitrates, sum_powers):
+def plot_bitrate_vs_power(codec, bitrates, sum_powers, directory_name):
     for bitrate in bitrates:
         sum_bitrate = 0
         num_data_points = 0
@@ -45,9 +45,11 @@ def plot_bitrate_vs_power(codec, bitrates, sum_powers):
     plt.ylabel('Average Power Consumption')
     plt.title(f'Average Power Consumption for {codec} at Different Bitrates')
     plt.legend()
+     # turn plot into a png file
+    plt.savefig(f'{directory_name}_{codec}_bitrate_vs_power.png')
     plt.show()
 
-def plot_avg_power(data_combinations, sum_powers, x_label, plot_title):
+def plot_avg_power(data_combinations, sum_powers, x_label, plot_title, directory_name):
     data_combinations = sorted(data_combinations)
     for combination in data_combinations:
         sum_combination = 0
@@ -61,10 +63,12 @@ def plot_avg_power(data_combinations, sum_powers, x_label, plot_title):
     plt.ylabel('Average Power Consumption')
     plt.title(plot_title)
     plt.legend()
+    # turn plot into a png file
+    plt.savefig(f'{directory_name}_{plot_title}.png')
     plt.show()
 
 
-def generate_insight_by_settings(data_directory):
+def generate_insight_by_settings(data_directory, directory_name):
     def filename_condition(filename):
         settings = filename.split('_')[1:]
         return '_'.join(settings)
@@ -74,9 +78,9 @@ def generate_insight_by_settings(data_directory):
 
     # Plot the average power for each combination of settings
     plot_avg_power(settings_combinations, sum_powers, 'Settings (Codec_Resolution_Bitrate_FPS)',
-                   'Average Power Consumption for Different Settings')
+                   'Average Power Consumption for Different Settings', directory_name)
 
-def generate_insight_by_resolution(data_directory):
+def generate_insight_by_resolution(data_directory, directory_name):
     def filename_condition(filename):
         return filename.split('_')[1]
 
@@ -85,10 +89,10 @@ def generate_insight_by_resolution(data_directory):
 
     # Plot the average power for each resolution
     plot_avg_power(resolutions, sum_powers, 'Resolution',
-                   'Average Power Consumption for Different Resolutions')
+                   'Average Power Consumption for Different Resolutions', directory_name)
 
 
-def generate_insight_by_codec_bitrate(data_directory):
+def generate_insight_by_codec_bitrate(data_directory, directory_name):
     def filename_condition(filename):
         codec, bitrate = filename.split('_')[3:5]
         return f'{codec} x {bitrate}'
@@ -98,10 +102,10 @@ def generate_insight_by_codec_bitrate(data_directory):
 
     # Plot the average power for each combination of codec and bitrate
     plot_avg_power(codec_bitrate_combinations, sum_powers, 'Codec x Bitrate',
-                   'Average Power Consumption for Different Codec x Bitrate Combinations')
+                   'Average Power Consumption for Different Codec x Bitrate Combinations', directory_name)
 
 # write a method to generate insights by bitrate
-def generate_insight_by_bitrate(data_directory):
+def generate_insight_by_bitrate(data_directory, directory_name):
     def filename_condition(filename):
         return filename.split('_')[3]
 
@@ -110,14 +114,27 @@ def generate_insight_by_bitrate(data_directory):
 
     # Plot the average power for each resolution
     plot_avg_power(bitrates, sum_powers, 'Resolution',
-                   'Average Power Consumption for Different Bitrates')
+                   'Average Power Consumption for Different Bitrates', directory_name)
+
+# generate insights for all the directories in the measuredata directory
+def generate_insight_for_directories(data_directory):
+    for directory in os.listdir(data_directory):
+        directory_path = os.path.join(data_directory, directory)
+        if os.path.isdir(directory_path):
+            print(f'Generating insights for {directory}')
+            generate_insight_by_settings(directory_path, directory)
+            generate_insight_by_resolution(directory_path, directory)
+            generate_insight_by_codec_bitrate(directory_path, directory)
+            generate_insight_by_bitrate(directory_path, directory)
+
 
 if __name__ == "__main__":
     # Path to the directory containing the data files
     data_directory = '../Measurements/data'
 
     # Generate insights
-    generate_insight_by_settings(data_directory)
-    generate_insight_by_resolution(data_directory)
-    generate_insight_by_codec_bitrate(data_directory)
-    generate_insight_by_bitrate(data_directory)
+    generate_insight_for_directories(data_directory)
+    # generate_insight_by_settings(data_directory)
+    # generate_insight_by_resolution(data_directory)
+    # generate_insight_by_codec_bitrate(data_directory)
+    # generate_insight_by_bitrate(data_directory)
