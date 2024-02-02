@@ -117,9 +117,90 @@ numberOfMeasurementsForm.addEventListener('submit', function (event) {
     }
 }, false)
 
-document.getElementById("startAnalyticsButton").addEventListener("click", function (event) {
-    // disable all buttons of the ui except for the stopAnalyticsButton
 
+var videoUrlsForm = document.getElementById("videoUrlsForm");
+
+// add event listener to videoUrlsForm to prevent default behaviour and validate input
+videoUrlsForm.addEventListener('submit', function (event) {
+
+    event.preventDefault();
+
+
+    event.stopPropagation();
+ 
+
+    saveVideoUrl();
+}, false)
+
+// add event listener to startAnalyticsButton to start analytics
+document.getElementById("startAnalyticsButton").addEventListener("click", async  function (event) {
+    // Disable the "Start Analytics" button
+    this.disabled = true;
+   
+
+    // Disable all buttons and inputs
+    disableUI();
+
+    // Disable all ways of user interaction with the dash player
+    disablePlayerInteraction();
+
+    // Enable the "Stop Analytics" button
+    stopAnalyticsButton.disabled = false;
+    // Iterate over the set of unique URLs and start analytics for each
+    await startAnalyticsForAllVideos();
+    //disable stop analytics button
+    stopAnalyticsButton.disabled = true;
+});
+async function startAnalyticsForAllVideos() {
+    var videoURLs = Array.from(uniqueURLs);
+
+    // Iterate over the set of unique URLs and start analytics for each
+    for (const videoURL of uniqueURLs) {
+        await changeVideo(videoURL);
+
+        await startAnalyticsForVideo(videoURL);
+    }
+}
+async function startAnalyticsForVideo(videoURL) {
+
+    await startPlaybackWithAllSettings();
+}
+
+async function changeVideo(url) {
+    const manifestLoadedPromise = new Promise(resolve => {
+        function manifestLoadedHandler() {
+            dashjsPlayer.off(dashjs.MediaPlayer.events.BUFFER_LOADED, manifestLoadedHandler);
+            resolve();
+        }
+        dashjsPlayer.on(dashjs.MediaPlayer.events.BUFFER_LOADED, manifestLoadedHandler);
+    });
+    dashjsPlayer.reset();
+    var videoElement = document.querySelector(".videoContainer video");
+    dashjsPlayer.attachView(videoElement);
+    dashjsPlayer.attachSource(url);
+   await manifestLoadedPromise;
+   
+}
+
+
+async function restartVideoAsync(videoURL) {
+    return new Promise(resolve => {
+        // Set the new video source
+        dashjsPlayer.attachSource(videoURL);
+
+        // Event listener for the "canplay" event
+        function canPlayHandler() {
+            dashjsPlayer.off("dashjs.MediaPlayer.events.MANIFEST_LOADED", canPlayHandler);
+            resolve();
+            startPlayback();
+        }
+
+        // Attach the "canplay" event listener
+        dashjsPlayer.on("dashjs.MediaPlayer.events.MANIFEST_LOADED", canPlayHandler);
+    });
+}
+
+function disableUI() {
     var allButtons = document.querySelectorAll('button');
     allButtons.forEach(function (button) {
         button.disabled = true;
@@ -130,18 +211,16 @@ document.getElementById("startAnalyticsButton").addEventListener("click", functi
         input.disabled = true;
     });
 
-    // disable all ways of user to interact with dash player, just keep playing videos
-    document.getElementById("videoController").style.pointerEvents = 'none';
-    document.getElementById("videoControllerWrapper").style.cursor = 'not-allowed';
-
     // disable navbar
     document.getElementById("navbarMain").style.pointerEvents = 'none';
     document.getElementById("mainNavbarWrapper").style.cursor = 'not-allowed';
+}
 
-    stopAnalyticsButton.disabled = false;
-    startPlaybackWithAllSettings()
-
-});
+// Utility function to disable all ways of user interaction with the dash player
+function disablePlayerInteraction() {
+    document.getElementById("videoController").style.pointerEvents = 'none';
+    document.getElementById("videoControllerWrapper").style.cursor = 'not-allowed';
+}
 
 // when stopAnalyticsButton is clicked, enable all buttons of the ui except for the stopAnalyticsButton
 stopAnalyticsButton.addEventListener("click", function (event) {
@@ -178,6 +257,7 @@ function enableUI() {
 
 // method to start playback of with all the different settings in the mpd file. the different resolutions, bitrates, etc.
 async function startPlaybackWithAllSettings() {
+    
     const adaptationSets = dashjsPlayer.getTracksFor("video");
     const abrConfig = {
         'streaming': {
@@ -189,7 +269,7 @@ async function startPlaybackWithAllSettings() {
         }
     };
 
-    //console.log(adaptationSets);
+    console.log(adaptationSets);
 
     for (const adaptationSet of adaptationSets) {
         await playAllRepresentations(adaptationSet, abrConfig);
@@ -201,7 +281,7 @@ async function startPlaybackWithAllSettings() {
 async function playAllRepresentations(adaptationSet, abrConfig) {
     const representations = adaptationSet.bitrateList;
     dashjsPlayer.setCurrentTrack(adaptationSet);
-    dashjsPlayer.seek(0);
+
 
     //console.log(representations);
 
@@ -213,7 +293,7 @@ async function playAllRepresentations(adaptationSet, abrConfig) {
 }
 
 async function playRepresentation(representationIndex, abrConfig) {
-    
+
     try {
         // Use a promise to wait for the PLAYBACK_ENDED event
         const playbackEndedPromise = new Promise(resolve => {
@@ -238,14 +318,6 @@ async function playRepresentation(representationIndex, abrConfig) {
         stopPlayback();
     }
 }
-
-// Utility function to simulate asynchronous behavior (sleep)
-//function sleep(ms) {
-//    return new Promise(resolve => setTimeout(resolve, ms));
-//}
-
-
-
 // method to start playback
 function startPlayback() {
     dashjsPlayer.play();
@@ -276,14 +348,6 @@ function playbackPaused() {
         }).then(function () {
             console.log("playback paused");
         });
-}
-
-function restartVideo(videoURL) {
-    // Set the new video source
-    player.attachSource(videoURL);
-
-    // Set the playback position to the beginning (time 0)
-    player.seek(0);
 }
 
 var uniqueURLs = new Set();
@@ -367,7 +431,9 @@ function init() {
     player.updateSettings({
         streaming: {
             buffer: {
-                fastSwitchEnabled: true, /* enables buffer replacement when switching bitrates for faster switching */
+                fastSwitchEnabled: true, /* enables buffer replacement when switching bitra
+                
+                tes for faster switching */
             },
             scheduling: {
                 scheduleWhilePaused: false, /* stops the player from loading segments while paused */
