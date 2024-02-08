@@ -84,23 +84,28 @@ connectionPlaybackHub.start().catch(function (err) {
 // bind buttons on webpage to class functions on backend
 startMeasurementButton.addEventListener("click", function (event) {
     connectionMeasurementHub
-        .send("StartMeasurement")
+        .send("StartMeasurementFixedOps")
         .catch(function (err) {
             console.error(err.toString());
         });
     event.preventDefault();
 });
 document.getElementById("clearMeasurementsButton").addEventListener("click", function (event) {
+    clearMeasurements();
+})
+document.getElementById("saveMeasurementsButton").addEventListener("click", function (event) {
+    connectionMeasurementHub.invoke("SaveMeasurements").catch(function (err) { console.error(err.toString()) });
+})
+
+// function to clear meassurements
+function clearMeasurements() {
     myChart.data.labels.length = 0; // empty chart label array
     myChart.data.datasets.forEach(function (dataset) {
         dataset.data.length = 0;
     });
     myChart.update();
     connectionMeasurementHub.invoke("ClearMeasurements").catch(function (err) { console.error(err.toString()) });
-})
-document.getElementById("saveMeasurementsButton").addEventListener("click", function (event) {
-    connectionMeasurementHub.invoke("SaveMeasurements").catch(function (err) { console.error(err.toString()) });
-})
+}
 
 
 
@@ -127,16 +132,16 @@ videoUrlsForm.addEventListener('submit', function (event) {
 
 
     event.stopPropagation();
- 
+
 
     saveVideoUrl();
 }, false)
 
 // add event listener to startAnalyticsButton to start analytics
-document.getElementById("startAnalyticsButton").addEventListener("click", async  function (event) {
+document.getElementById("startAnalyticsButton").addEventListener("click", async function (event) {
     // Disable the "Start Analytics" button
     this.disabled = true;
-   
+
 
     // Disable all buttons and inputs
     disableUI();
@@ -148,18 +153,24 @@ document.getElementById("startAnalyticsButton").addEventListener("click", async 
     stopAnalyticsButton.disabled = false;
     // Iterate over the set of unique URLs and start analytics for each
     await startAnalyticsForAllVideos();
+
     //disable stop analytics button
     stopAnalyticsButton.disabled = true;
 });
 async function startAnalyticsForAllVideos() {
-    var videoURLs = Array.from(uniqueURLs);
-
+    // If there are no videos, use the current video
+    if (uniqueURLs.size === 0) {
+        await startPlaybackWithAllSettings();
+        return;
+    }
     // Iterate over the set of unique URLs and start analytics for each
     for (const videoURL of uniqueURLs) {
         await changeVideo(videoURL);
 
         await startAnalyticsForVideo(videoURL);
     }
+
+    
 }
 async function startAnalyticsForVideo(videoURL) {
 
@@ -178,26 +189,8 @@ async function changeVideo(url) {
     var videoElement = document.querySelector(".videoContainer video");
     dashjsPlayer.attachView(videoElement);
     dashjsPlayer.attachSource(url);
-   await manifestLoadedPromise;
-   
-}
+    await manifestLoadedPromise;
 
-
-async function restartVideoAsync(videoURL) {
-    return new Promise(resolve => {
-        // Set the new video source
-        dashjsPlayer.attachSource(videoURL);
-
-        // Event listener for the "canplay" event
-        function canPlayHandler() {
-            dashjsPlayer.off("dashjs.MediaPlayer.events.MANIFEST_LOADED", canPlayHandler);
-            resolve();
-            startPlayback();
-        }
-
-        // Attach the "canplay" event listener
-        dashjsPlayer.on("dashjs.MediaPlayer.events.MANIFEST_LOADED", canPlayHandler);
-    });
 }
 
 function disableUI() {
@@ -227,6 +220,7 @@ stopAnalyticsButton.addEventListener("click", function (event) {
     dashjsPlayer.seek(0);
     enableUI();
     stopPlayback();
+    connectionMeasurementHub.invoke("StopMeasurement").catch(function (err) { console.error(err.toString()) });
 
 });
 
@@ -257,7 +251,7 @@ function enableUI() {
 
 // method to start playback of with all the different settings in the mpd file. the different resolutions, bitrates, etc.
 async function startPlaybackWithAllSettings() {
-    
+
     const adaptationSets = dashjsPlayer.getTracksFor("video");
     const abrConfig = {
         'streaming': {
@@ -269,7 +263,6 @@ async function startPlaybackWithAllSettings() {
         }
     };
 
-    console.log(adaptationSets);
 
     for (const adaptationSet of adaptationSets) {
         await playAllRepresentations(adaptationSet, abrConfig);
@@ -307,6 +300,8 @@ async function playRepresentation(representationIndex, abrConfig) {
         // Update settings and start playback
         dashjsPlayer.updateSettings(abrConfig);
         dashjsPlayer.setQualityFor("video", representationIndex, true);
+        dashjsPlayer.seek(0);
+        startAnalyticsMeasurement();
         startPlayback();
 
         // Wait for the PLAYBACK_ENDED event
@@ -316,7 +311,27 @@ async function playRepresentation(representationIndex, abrConfig) {
     } finally {
         // Stop playback regardless of success or failure
         stopPlayback();
+        // Stop analytics measurement
+        connectionMeasurementHub
+            .invoke("StopMeasurement")
+            .catch(function (err) {
+                console.error(err.toString());
+            });
     }
+}
+
+// method to start analytics measurement
+function startAnalyticsMeasurement() {
+    // invoke clear measurements
+    clearMeasurements();
+    connectionMeasurementHub
+        .send("StartMeasurementUntilEnd")
+        .catch(function (err) {
+            console.error(err.toString());
+        })
+        .then(function () {
+            console.log("measurement started");
+        });
 }
 // method to start playback
 function startPlayback() {
