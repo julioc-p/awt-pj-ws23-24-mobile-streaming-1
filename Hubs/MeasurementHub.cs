@@ -5,7 +5,8 @@ namespace awt_pj_ss23_green_streaming_1.Hubs
 {
     public class MeasurementHub : Hub
     {
-        public MeasurementHub() { }
+        public MeasurementHub() {
+        }
 
         /// <summary>
         /// Sends <c>TotalPower</c> and time difference between <c>StartTime</c> of
@@ -39,14 +40,17 @@ namespace awt_pj_ss23_green_streaming_1.Hubs
         /// <c>MeasurementProcess</c> is finished.
         /// </summary>
         /// <returns></returns>
-        public async Task StartMeasurementUntilEnd()
-        {
+        public void StartMeasurementUntilEnd()
+        {   
+            MeasurementProcess measurementProcess = new MeasurementProcess();
             CancellationTokenSource cts = new CancellationTokenSource();
             MeasurementProcess.ProcessMeasurement = SendMeasurement;
             MeasurementProcess.set(cts);
+            //MeasurementProcess.HubContext = hubc;
             MeasurementProcess.Start(false, cts.Token);
+
+            
             Console.WriteLine("Started Measurement");
-            await MeasurementProcess.WaitForExitAsync();
 
         }
 
