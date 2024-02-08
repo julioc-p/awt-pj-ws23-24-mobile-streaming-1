@@ -337,7 +337,7 @@ public class MeasurementProcess
             // Create Timer to periodically get measurements
             var timer = new System.Timers.Timer(MEASUREMENT_RATE);
             timer.Elapsed += new ElapsedEventHandler(
-                (sender, e) => WindowsMeasurementHandler(sender, e, msrsForPower, fixedOps)
+                (sender, e) => WindowsMeasurementHandler(sender, e, msrsForPower)
             );
             uint iterations = NumOfMeasurements;
             Console.WriteLine("Trying with cancellation token");
@@ -369,8 +369,7 @@ public class MeasurementProcess
     private static async void WindowsMeasurementHandler(
         Object? source,
         ElapsedEventArgs e,
-        IEnumerable<int> msrsForPower,
-        bool fixedOps
+        IEnumerable<int> msrsForPower
     )
     {
     
@@ -410,10 +409,7 @@ public class MeasurementProcess
             {
                 return;
             }
-            if(fixedOps){
-                await ProcessMeasurement(Measurement);
-            }
-            
+            await ProcessMeasurement(Measurement);
             // create new Measurement so old one does not get overwritten
             Measurement = new Measurement();
         }

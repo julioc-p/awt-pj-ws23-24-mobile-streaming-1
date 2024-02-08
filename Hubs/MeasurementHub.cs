@@ -17,6 +17,7 @@ namespace awt_pj_ss23_green_streaming_1.Hubs
         /// <returns></returns>
         public async Task SendMeasurement(Measurement measurement)
         {
+            Console.WriteLine("Sending Measurement");
             var timeDiff = (measurement.Time - MeasurementProcess.StartTime).TotalSeconds;
             await Clients.All.SendAsync("ReceiveMeasurement", measurement.TotalPower, timeDiff);
         }
@@ -40,7 +41,7 @@ namespace awt_pj_ss23_green_streaming_1.Hubs
         /// <c>MeasurementProcess</c> is finished.
         /// </summary>
         /// <returns></returns>
-        public void StartMeasurementUntilEnd()
+        public async Task StartMeasurementUntilEnd()
         {   
             MeasurementProcess measurementProcess = new MeasurementProcess();
             CancellationTokenSource cts = new CancellationTokenSource();
@@ -51,6 +52,7 @@ namespace awt_pj_ss23_green_streaming_1.Hubs
 
             
             Console.WriteLine("Started Measurement");
+            await MeasurementProcess.WaitForExitAsync();
 
         }
 
