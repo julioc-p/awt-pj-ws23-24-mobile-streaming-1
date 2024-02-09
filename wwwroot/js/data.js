@@ -270,12 +270,14 @@ function disablePlayerInteraction() {
 }
 
 // when stopAnalyticsButton is clicked, enable all buttons of the ui except for the stopAnalyticsButton
-stopAnalyticsButton.addEventListener("click", function (event) {
+stopAnalyticsButton.addEventListener("click", async function (event) {
     dashjsPlayer.seek(0);
     enableUI();
     stopPlayback();
     stopAnalyticsMeassurement();
-    saveAnalyticsMeasurements();
+    await saveAnalyticsMeasurements();
+    clearMeasurements();
+    alert("Measurements for " + currentVideo + " have been saved in folder" + "Measurements/data/" + currentVideo);
 });
 
 function stopAnalyticsMeassurement() {
@@ -287,7 +289,7 @@ function stopAnalyticsMeassurement() {
 
 }
 
-function saveAnalyticsMeasurements() {
+async function saveAnalyticsMeasurements() {
     connectionMeasurementHub
         .invoke("SaveMeasurementsInFolder", currentVideo, currentSettings)
         .catch(function (err) {
