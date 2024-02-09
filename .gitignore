@@ -6,6 +6,13 @@
 wwwroot/js/chartjs/*
 wwwroot/content/*
 Measurements/*
+
+#ignore images
+*.png
+
+# ignore .sln files
+*.sln
+
 # User-specific files
 *.suo
 *.user
