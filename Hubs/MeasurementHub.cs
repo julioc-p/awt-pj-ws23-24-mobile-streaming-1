@@ -54,15 +54,6 @@ namespace awt_pj_ss23_green_streaming_1.Hubs
 
         }
 
-        /// <summary>
-        /// Stops<c> MeasurementProcess</c> 
-        /// </summary>
-        /// <returns></returns>
-        public void StopMeasurement()
-        {
-            MeasurementProcess.Stop();
-            Console.WriteLine("Stopped Measurement");
-        }
 
 
 

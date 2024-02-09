@@ -196,6 +196,7 @@ document
 async function startAnalyticsForAllVideos() {
     // If there are no videos, use the current video
     if (uniqueURLs.size === 0) {
+        createNewFolder(currentVideo);
         await startPlaybackWithAllSettings();
         return;
     }
@@ -274,18 +275,19 @@ stopAnalyticsButton.addEventListener("click", function (event) {
     enableUI();
     stopPlayback();
     stopAnalyticsMeassurement();
+    saveAnalyticsMeasurements();
 });
 
 function stopAnalyticsMeassurement() {
     analyticsHub
-        .send("StopAnalitycs")
+        .invoke("StopAnalitycs")
         .catch(function (err) {
             console.error(err.toString());
-        })
-        .then(function () {
-            console.log("measurement stopped");
         });
 
+}
+
+function saveAnalyticsMeasurements() {
     connectionMeasurementHub
         .invoke("SaveMeasurementsInFolder", currentVideo, currentSettings)
         .catch(function (err) {
@@ -382,7 +384,9 @@ async function playRepresentation(representationIndex, abrConfig, videoURL) {
     // Stop playback regardless of success or failure
     stopPlayback();
     // Stop analytics measurement
-    stopAnalyticsMeassurement();
+        stopAnalyticsMeassurement();
+        saveAnalyticsMeasurements();
+        clearMeasurements();
   }
 }
 

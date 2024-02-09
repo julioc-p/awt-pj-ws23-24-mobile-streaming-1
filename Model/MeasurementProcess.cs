@@ -76,9 +76,9 @@ public class MeasurementProcess
         throw new NotImplementedException("Implementation missing for the current OS.");
     }
 
- 
 
-   
+
+
     public static void Stop()
     {
         // print some debug info
@@ -93,7 +93,6 @@ public class MeasurementProcess
             cts.Cancel();
         }
         cts.Dispose();
-        //ClearMeasurements();
     }
 
     public static async Task WaitForExitAsync()
@@ -119,13 +118,13 @@ public class MeasurementProcess
     /// </summary>
     /// <returns></returns>
     public static async Task SaveMeasurements(string folderName, string settings)
-    {   
-           string path =
-            $"Measurements/data/{folderName}/measurement_{settings}_{MeasurementProcess.StartTime.ToString("s")}.txt";
+    {
+        string path =
+         $"Measurements/data/{folderName}/measurement_{settings}_{MeasurementProcess.StartTime.ToString("s")}.txt";
         path = path.Replace(":", "");
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         await storeMeasurements(path);
-       
+
     }
 
     /// <summary>
@@ -261,14 +260,15 @@ public class MeasurementProcess
     /// Initializes the IntelPowerGadget Library and creates a Timer that reads its measurements
     /// </summary>
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    private static void SetupMeasurementProcessWindows(bool fixedOps, object? obj) { 
-       CancellationToken token = default(CancellationToken);
-       if (!(obj is null))
+    private static void SetupMeasurementProcessWindows(bool fixedOps, object? obj)
+    {
+        CancellationToken token = default(CancellationToken);
+        if (!(obj is null))
         {
             token = (CancellationToken)obj;
         }
-   
-  
+
+
         var cpu = new System.Management.ManagementObjectSearcher("select * from Win32_Processor")
             .Get()
             .Cast<System.Management.ManagementObject>()
@@ -327,7 +327,7 @@ public class MeasurementProcess
                 (sender, e) => WindowsMeasurementHandler(sender, e, msrsForPower)
             );
             uint iterations = NumOfMeasurements;
-         
+
             if (iterations > 0)
             {
                 timer.Elapsed += (s, e) =>
@@ -337,10 +337,11 @@ public class MeasurementProcess
                         timer.Stop();
                     }
 
-                    if (fixedOps) {
+                    if (fixedOps)
+                    {
                         iterations--;
                     }
-        
+
                 };
             }
             Timer = timer;

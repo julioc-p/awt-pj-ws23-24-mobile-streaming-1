@@ -16,15 +16,12 @@ public class AnalyticsHub : Hub
   /// </summary>
   public void StopAnalitycs()
   {
-    System.Console.WriteLine("Stoping Measurement Hub from StopAnalitycsHub---------------------------");
     MeasurementProcess.Stop();
   }
 
   // make a method to create a folder with a parameter name
   public void CreateNewFolder(string name)
   {
-
-    Console.WriteLine("CreateNewFolder: " + name);
     string path =
             $"Measurements/data/{name}";           
         path = path.Replace(":", "");
