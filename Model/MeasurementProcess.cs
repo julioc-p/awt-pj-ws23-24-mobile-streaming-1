@@ -93,7 +93,7 @@ public class MeasurementProcess
             cts.Cancel();
         }
         cts.Dispose();
-        ClearMeasurements();
+        //ClearMeasurements();
     }
 
     public static async Task WaitForExitAsync()
