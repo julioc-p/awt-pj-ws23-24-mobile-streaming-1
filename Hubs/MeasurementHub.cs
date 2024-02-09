@@ -5,8 +5,7 @@ namespace awt_pj_ss23_green_streaming_1.Hubs
 {
     public class MeasurementHub : Hub
     {
-        public MeasurementHub() {
-        }
+        public MeasurementHub() { }
 
         /// <summary>
         /// Sends <c>TotalPower</c> and time difference between <c>StartTime</c> of
@@ -91,7 +90,6 @@ namespace awt_pj_ss23_green_streaming_1.Hubs
 
         public void ClearMeasurements()
         {
-            Console.WriteLine("Cleared Measurements");
             MeasurementProcess.ClearMeasurements();
         }
     }

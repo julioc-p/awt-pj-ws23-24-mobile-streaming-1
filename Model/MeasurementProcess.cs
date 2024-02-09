@@ -129,6 +129,60 @@ public class MeasurementProcess
         ClearMeasurements();
     }
 
+    public static async Task<bool> StartAsync(bool fixedNumber, object? obj)
+    {
+        SetupMeasurementProcess(fixedNumber, obj); // Assigns Process on macOS or Timer on Windows
+        if (System.OperatingSystem.IsMacOS())
+        {
+            bool? started = Process?.Start();
+            if (started is true)
+            {
+                StartTime = DateTime.Now;
+                Process?.BeginOutputReadLine();
+                return true;
+            }
+            return false;
+        }
+        else if (System.OperatingSystem.IsWindows())
+        {
+            try
+            {
+                if (Timer is null)
+                {
+                    return false;
+                }
+                StartTime = DateTime.Now;
+                Timer?.Start();
+                await Task.Delay(100); // Allow time for asynchronous setup to complete
+                return true;
+            }
+            catch (Exception e)
+            {
+                System.Console.WriteLine(e.StackTrace);
+                return false;
+            }
+        }
+        throw new NotImplementedException("Implementation missing for the current OS.");
+    }
+
+
+    public static void Stop()
+    {
+        // print some debug info
+        System.Console.WriteLine("Stopping Measurement Process");
+        // Add code to stop the measurement process (stop timers, clear resources, etc.)
+        if (System.OperatingSystem.IsMacOS())
+        {
+            Process?.Kill(); // Terminate the powermetrics process on macOS
+        }
+        else if (System.OperatingSystem.IsWindows())
+        {
+            cts.Cancel();
+        }
+        cts.Dispose();
+        ClearMeasurements();
+    }
+
     public static async Task WaitForExitAsync()
     {
         if (Process is System.Diagnostics.Process p)
@@ -373,15 +427,12 @@ public class MeasurementProcess
         }
     }
 
-   
-
     private static async void WindowsMeasurementHandler(
         Object? source,
         ElapsedEventArgs e,
         IEnumerable<int> msrsForPower
     )
     {
-    
         // reads measurement, throws exception if fail
         if (!IntelPowerGadget.ReadSample())
         {

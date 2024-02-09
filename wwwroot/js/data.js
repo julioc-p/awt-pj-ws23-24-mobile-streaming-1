@@ -2,17 +2,17 @@
 
 // build connection to server
 const connectionMeasurementHub = new signalR.HubConnectionBuilder()
-    .withUrl("/measurementHub")
-    .build();
+  .withUrl("/measurementHub")
+  .build();
 const connectionPlaybackHub = new signalR.HubConnectionBuilder()
-    .withUrl("/playbackHub")
-    .build();
+  .withUrl("/playbackHub")
+  .build();
 const analyticsHub = new signalR.HubConnectionBuilder()
-    .withUrl("/analyticsHub")
-    .build();
+  .withUrl("/analyticsHub")
+  .build();
 
 // chart config
-const ctx = document.getElementById('myChart');
+const ctx = document.getElementById("myChart");
 const myChart = new Chart(ctx, {
     type: "line",
     data: {
@@ -312,9 +312,8 @@ function enableUI() {
     document.getElementById("navbarMain").style.pointerEvents = "auto";
     document.getElementById("mainNavbarWrapper").style.cursor = "auto";
 
-    stopAnalyticsButton.disabled = true;
+  stopAnalyticsButton.disabled = true;
 }
-
 
 // method to start playback of with all the different settings in the mpd file. the different resolutions, bitrates, etc.
 async function startPlaybackWithAllSettings() {
@@ -333,12 +332,12 @@ async function startPlaybackWithAllSettings() {
         await playAllRepresentations(adaptationSet, abrConfig);
     }
 
-    enableUI();
+  enableUI();
 }
 
 async function playAllRepresentations(adaptationSet, abrConfig) {
-    const representations = adaptationSet.bitrateList;
-    dashjsPlayer.setCurrentTrack(adaptationSet);
+  const representations = adaptationSet.bitrateList;
+  dashjsPlayer.setCurrentTrack(adaptationSet);
 
     //console.log(representations);
 
@@ -372,53 +371,51 @@ async function playRepresentation(representationIndex, abrConfig, videoURL) {
         startAnalyticsMeasurement();
         startPlayback();
 
-        // Wait for the PLAYBACK_ENDED event
-        await playbackEndedPromise;
-    } catch (error) {
-        console.error("An error occurred during playback:", error);
-    } finally {
-        // Stop playback regardless of success or failure
-        stopPlayback();
-        // Stop analytics measurement
-        stopAnalyticsMeassurement();
-        // call save measurements
-    }
+    // Wait for the PLAYBACK_ENDED event
+    await playbackEndedPromise;
+  } catch (error) {
+    console.error("An error occurred during playback:", error);
+  } finally {
+    // Stop playback regardless of success or failure
+    stopPlayback();
+    // Stop analytics measurement
+    stopAnalyticsMeassurement();
+  }
 }
 
 // method to start analytics measurement
 function startAnalyticsMeasurement() {
-    // invoke clear measurements
-    clearMeasurements();
-    connectionMeasurementHub
-        .send("StartMeasurementUntilEnd")
-        .catch(function (err) {
-            console.error(err.toString());
-        })
-        .then(function () {
-            console.log("measurement started");
-        });
+  // invoke clear measurements
+  clearMeasurements();
+  connectionMeasurementHub
+    .send("StartMeasurementUntilEnd")
+    .catch(function (err) {
+      console.error(err.toString());
+    })
+    .then(function () {
+      console.log("measurement started");
+    });
 }
 // method to start playback
 function startPlayback() {
-    dashjsPlayer.play();
+  dashjsPlayer.play();
 }
 
 // method to stop playback
 function stopPlayback() {
-    dashjsPlayer.pause();
+  dashjsPlayer.pause();
 }
-
 
 // helper functions to send changes in playback state to server
 function playbackStarted() {
-    connectionPlaybackHub
-        .invoke("StartPlayback")
-        .catch(function (err) {
-            console.error(err.toString());
-        })
-        .then(function () {
-            console.log("playback started");
-        });
+  connectionPlaybackHub
+    .invoke("StartPlayback")
+    .catch(function (err) {
+      console.error(err.toString());
+    })
+    .then(function () {
+      console.log("playback started");
+    });
 }
 function playbackPaused() {
     connectionPlaybackHub
@@ -435,72 +432,71 @@ var uniqueURLs = new Set();
 
 // Function to save video URL
 function saveVideoUrl() {
+  var videoURLInput = document.getElementById("videoUrl");
+  var videoURL = videoURLInput.value;
 
-    var videoURLInput = document.getElementById("videoUrl");
-    var videoURL = videoURLInput.value;
-
-    if (isValidURL(videoURL)) {
-        addURLToList(videoURL);
-        videoURLInput.value = "";
-    } else {
-        videoURLInput.setCustomValidity("Please enter a valid URL");
-        videoURLInput.reportValidity();
-    }
+  if (isValidURL(videoURL)) {
+    addURLToList(videoURL);
+    videoURLInput.value = "";
+  } else {
+    videoURLInput.setCustomValidity("Please enter a valid URL");
+    videoURLInput.reportValidity();
+  }
 }
 
 // Function to check if a string is a valid URL
 function isValidURL(url) {
-    try {
-        new URL(url);
-        return true;
-    } catch (error) {
-        return false;
-    }
+  try {
+    new URL(url);
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
 // Function to add URL to the list
 function addURLToList(url) {
-    var urlList = document.getElementById("urlList");
+  var urlList = document.getElementById("urlList");
 
-    if (uniqueURLs.has(url)) {
-        alert("This URL is already in the list.");
-        return;
-    }
+  if (uniqueURLs.has(url)) {
+    alert("This URL is already in the list.");
+    return;
+  }
 
-    var listItem = document.createElement("li");
-    listItem.className =
-        "list-group-item d-flex justify-content-between align-items-center";
+  var listItem = document.createElement("li");
+  listItem.className =
+    "list-group-item d-flex justify-content-between align-items-center";
 
-    var deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-    deleteButton.className = "btn btn-danger btn-sm";
-    deleteButton.onclick = function () {
-        urlList.removeChild(listItem);
-        uniqueURLs.delete(url);
-        checkDisplay();
-    };
-
-    var textSpan = document.createElement("span");
-    textSpan.textContent = url;
-    textSpan.style.marginRight = "10px";
-
-    listItem.appendChild(textSpan);
-    listItem.appendChild(deleteButton);
-
-    urlList.appendChild(listItem);
-
-    uniqueURLs.add(url);
-
+  var deleteButton = document.createElement("button");
+  deleteButton.textContent = "Delete";
+  deleteButton.className = "btn btn-danger btn-sm";
+  deleteButton.onclick = function () {
+    urlList.removeChild(listItem);
+    uniqueURLs.delete(url);
     checkDisplay();
+  };
+
+  var textSpan = document.createElement("span");
+  textSpan.textContent = url;
+  textSpan.style.marginRight = "10px";
+
+  listItem.appendChild(textSpan);
+  listItem.appendChild(deleteButton);
+
+  urlList.appendChild(listItem);
+
+  uniqueURLs.add(url);
+
+  checkDisplay();
 }
 
 // Function to check and toggle the display of the list container
 function checkDisplay() {
-    var videoUrlList = document.getElementById("videoUrlList");
-    var displayValue = uniqueURLs.size > 0 ? "block" : "none";
-    videoUrlList.style.display = displayValue;
+  var videoUrlList = document.getElementById("videoUrlList");
+  var displayValue = uniqueURLs.size > 0 ? "block" : "none";
+  videoUrlList.style.display = displayValue;
 }
-// init function to run on pageload 
+// init function to run on pageload
 function init() {
     // https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod.mpd
     var url = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
@@ -509,13 +505,13 @@ function init() {
     var player = dashjs.MediaPlayer().create();
     dashjsPlayer = player;
 
-    player.initialize(videoElement, url, false);
-    var controlbar = new ControlBar(player);
-    controlbar.initialize();
-    player.updateSettings({
-        streaming: {
-            buffer: {
-                fastSwitchEnabled: true /* enables buffer replacement when switching bitra
+  player.initialize(videoElement, url, false);
+  var controlbar = new ControlBar(player);
+  controlbar.initialize();
+  player.updateSettings({
+    streaming: {
+      buffer: {
+        fastSwitchEnabled: true /* enables buffer replacement when switching bitra
                 
                 tes for faster switching */,
             },

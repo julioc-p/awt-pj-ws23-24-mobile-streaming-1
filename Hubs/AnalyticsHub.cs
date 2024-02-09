@@ -16,6 +16,7 @@ public class AnalyticsHub : Hub
   /// </summary>
   public void StopAnalitycs()
   {
+    System.Console.WriteLine("Stoping Measurement Hub from StopAnalitycsHub---------------------------");
     MeasurementProcess.Stop();
   }
 
