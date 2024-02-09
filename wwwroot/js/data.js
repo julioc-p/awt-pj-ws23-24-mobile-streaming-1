@@ -101,6 +101,7 @@ analyticsHub.start().catch(function (err) {
 });
 
 var currentVideo = ""
+var currentSettings = ""
 // bind buttons on webpage to class functions on backend
 startMeasurementButton.addEventListener("click", function (event) {
     connectionMeasurementHub
@@ -286,7 +287,7 @@ function stopAnalyticsMeassurement() {
         });
 
     connectionMeasurementHub
-        .invoke("SaveMeasurementsInFolder", currentVideo)
+        .invoke("SaveMeasurementsInFolder", currentVideo, currentSettings)
         .catch(function (err) {
             console.error(err.toString());
         });
@@ -363,11 +364,13 @@ async function playRepresentation(representationIndex, abrConfig, videoURL) {
                 playbackEndedHandler
             );
         });
-
+       
+      
         // Update settings and start playback
         dashjsPlayer.updateSettings(abrConfig);
         dashjsPlayer.setQualityFor("video", representationIndex, true);
         dashjsPlayer.seek(0);
+        updateCurrentSettings();
         startAnalyticsMeasurement();
         startPlayback();
 
@@ -381,6 +384,27 @@ async function playRepresentation(representationIndex, abrConfig, videoURL) {
     // Stop analytics measurement
     stopAnalyticsMeassurement();
   }
+}
+
+function updateCurrentSettings() {
+    try {
+        var streamInfo = dashjsPlayer.getActiveStream().getStreamInfo();;
+        var dashAdapter = dashjsPlayer.getDashAdapter();
+        const periodIdx = streamInfo.index;
+        var adaptation = dashAdapter.getAdaptationForType(periodIdx, 'video', streamInfo);
+        var dashMetrics = dashjsPlayer.getDashMetrics();
+        var repSwitch = dashMetrics.getCurrentRepresentationSwitch('video', true);
+        var currentRep = adaptation.Representation_asArray.find(function (rep) {
+            return rep.id === repSwitch.to
+        })
+        var frameRate = currentRep.frameRate;
+        // round the bandwidth to kpbs
+        var bandwidth = Math.round(currentRep.bandwidth / 1000);
+        // update current settings with the format: resolution_fps_bitrate_codec
+        currentSettings = currentRep.width + "x" + currentRep.height + "_" + frameRate + "fps_" + bandwidth + "kbps_" + currentRep.codecs;
+    }catch (error) {
+        console.error("An error occurred while updatting settings:", error);
+    }
 }
 
 // method to start analytics measurement

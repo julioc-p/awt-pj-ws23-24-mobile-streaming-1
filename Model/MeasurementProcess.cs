@@ -118,10 +118,10 @@ public class MeasurementProcess
     /// Saves Measurements to file in specified folder directory.
     /// </summary>
     /// <returns></returns>
-    public static async Task SaveMeasurements(string folderName)
+    public static async Task SaveMeasurements(string folderName, string settings)
     {   
            string path =
-            $"Measurements/data/{folderName}/measurement_{MeasurementProcess.StartTime.ToString("s")}.txt";
+            $"Measurements/data/{folderName}/measurement_{settings}_{MeasurementProcess.StartTime.ToString("s")}.txt";
         path = path.Replace(":", "");
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         await storeMeasurements(path);
