@@ -72,13 +72,22 @@ namespace awt_pj_ss23_green_streaming_1.Hubs
         /// Saves measurements collected by <c>MeasurementProcess</c>
         /// </summary>
         /// <returns></returns>
-        public async Task SaveMeasurements(string folderName = "")
+        public async Task SaveMeasurementsInFolder(string folderName = "")
         {
             Console.WriteLine("Saving Measurements in folder: " + folderName);
             await MeasurementProcess.SaveMeasurements(folderName);
             Console.WriteLine("Saved Measurment");
         }
-    
+
+        /// <summary>
+        /// Saves measurements collected by <c>MeasurementProcess</c>
+        /// </summary>
+        /// <returns></returns>
+        public async Task SaveMeasurements()
+        {
+            await MeasurementProcess.SaveMeasurements();
+            Console.WriteLine("Saved Measurment");
+        }
 
         public void SaveNumberOfMeasurements(uint numOfMeasurements)
         {

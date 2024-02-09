@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Timers;
 using awt_pj_ss23_green_streaming_1.Libs;
@@ -114,24 +115,35 @@ public class MeasurementProcess
     }
 
     /// <summary>
+    /// Saves Measurements to file in specified folder directory.
+    /// </summary>
+    /// <returns></returns>
+    public static async Task SaveMeasurements(string folderName)
+    {   
+           string path =
+            $"Measurements/data/{folderName}/measurement_{MeasurementProcess.StartTime.ToString("s")}.txt";
+        path = path.Replace(":", "");
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        await storeMeasurements(path);
+       
+    }
+
+    /// <summary>
     /// Saves Measurements to file in Measurements directory.
     /// </summary>
     /// <returns></returns>
-    public static async Task SaveMeasurements(string? folderName)
-    {   
-        string path = "";
-        if (folderName is null)
-        {
-            path =
+    public static async Task SaveMeasurements()
+    {
+        string path =
             $"Measurements/data/measurement_{MeasurementProcess.StartTime.ToString("s")}.txt";
-        }
-        else
-        {
-            path =
-            $"Measurements/data/{folderName}/measurement_{MeasurementProcess.StartTime.ToString("s")}.txt";
-        }         
         path = path.Replace(":", "");
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        await storeMeasurements(path);
+
+    }
+
+    private static async Task storeMeasurements(string path)
+    {
         using (FileStream fs = File.Create(path))
         {
             StringBuilder sb = new StringBuilder(Measurements.Count * 101);

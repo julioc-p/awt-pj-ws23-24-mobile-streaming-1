@@ -118,7 +118,7 @@ document
 document
     .getElementById("saveMeasurementsButton")
     .addEventListener("click", function (event) {
-        connectionMeasurementHub.invoke("SaveMeasurements", currentVideo).catch(function (err) {
+        connectionMeasurementHub.invoke("SaveMeasurements").catch(function (err) {
             console.error(err.toString());
         });
     });
@@ -286,7 +286,7 @@ function stopAnalyticsMeassurement() {
         });
 
     connectionMeasurementHub
-        .invoke("SaveMeasurements", currentVideo)
+        .invoke("SaveMeasurementsInFolder", currentVideo)
         .catch(function (err) {
             console.error(err.toString());
         });
