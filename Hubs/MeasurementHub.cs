@@ -25,12 +25,49 @@ namespace awt_pj_ss23_green_streaming_1.Hubs
         /// <c>MeasurementProcess</c> is finished.
         /// </summary>
         /// <returns></returns>
-        public async Task StartMeasurement()
+        public async Task StartMeasurementFixedOps()
         {
+
             MeasurementProcess.ProcessMeasurement = SendMeasurement;
-            MeasurementProcess.Start();
+            MeasurementProcess.Start(true, null);
             Console.WriteLine("Started Measurement");
             await MeasurementProcess.WaitForExitAsync();
+        }
+
+        /// <summary>
+        /// Starts <c>MeasurementProcess</c> but blocks <c>MeasurementHub</c> until
+        /// <c>MeasurementProcess</c> is finished.
+        /// </summary>
+        /// <returns></returns>
+        public async Task StartMeasurementUntilEnd()
+        {   
+            MeasurementProcess measurementProcess = new MeasurementProcess();
+            CancellationTokenSource cts = new CancellationTokenSource();
+            MeasurementProcess.ProcessMeasurement = SendMeasurement;
+            MeasurementProcess.set(cts);
+            //MeasurementProcess.HubContext = hubc;
+            MeasurementProcess.Start(false, cts.Token);
+
+            
+            Console.WriteLine("Started Measurement");
+            await MeasurementProcess.WaitForExitAsync();
+
+        }
+
+
+
+
+
+
+        /// <summary>
+        /// Saves measurements collected by <c>MeasurementProcess</c>
+        /// </summary>
+        /// <returns></returns>
+        public async Task SaveMeasurementsInFolder(string folderName, string currentSettings)
+        {
+            Console.WriteLine("Saving Measurements in folder: " + folderName);
+            await MeasurementProcess.SaveMeasurements(folderName, currentSettings);
+            Console.WriteLine("Saved Measurment");
         }
 
         /// <summary>

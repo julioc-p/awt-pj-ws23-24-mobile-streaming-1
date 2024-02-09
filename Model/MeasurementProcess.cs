@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Timers;
 using awt_pj_ss23_green_streaming_1.Libs;
@@ -17,6 +18,7 @@ public class MeasurementProcess
     public delegate Task SendMeasurement(Measurement measurement);
     public static DateTime StartTime { get; set; }
     private static bool _videoPlaying;
+    private static CancellationTokenSource? cts;
     public static bool VideoPlaying
     {
         get => _videoPlaying;
@@ -39,9 +41,9 @@ public class MeasurementProcess
     /// Returns <c>false</c> if not.
     /// </summary>
     /// <returns></returns>
-    public static bool Start()
+    public static bool Start(bool fixedNumber, object? obj)
     {
-        SetupMeasurementProcess(); // Assigns Process on macOS or Timer on Windows
+        SetupMeasurementProcess(fixedNumber, obj); // Assigns Process on macOS or Timer on Windows
         if (System.OperatingSystem.IsMacOS())
         {
             bool? started = Process?.Start();
@@ -74,6 +76,25 @@ public class MeasurementProcess
         throw new NotImplementedException("Implementation missing for the current OS.");
     }
 
+
+
+
+    public static void Stop()
+    {
+        // print some debug info
+        System.Console.WriteLine("Stopping Measurement Process");
+        // Add code to stop the measurement process (stop timers, clear resources, etc.)
+        if (System.OperatingSystem.IsMacOS())
+        {
+            Process?.Kill(); // Terminate the powermetrics process on macOS
+        }
+        else if (System.OperatingSystem.IsWindows())
+        {
+            cts.Cancel();
+        }
+        cts.Dispose();
+    }
+
     public static async Task WaitForExitAsync()
     {
         if (Process is System.Diagnostics.Process p)
@@ -93,15 +114,35 @@ public class MeasurementProcess
     }
 
     /// <summary>
+    /// Saves Measurements to file in specified folder directory.
+    /// </summary>
+    /// <returns></returns>
+    public static async Task SaveMeasurements(string folderName, string settings)
+    {
+        string path =
+         $"Measurements/data/{folderName}/measurement_{settings}_{MeasurementProcess.StartTime.ToString("s")}.txt";
+        path = path.Replace(":", "");
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        await storeMeasurements(path);
+
+    }
+
+    /// <summary>
     /// Saves Measurements to file in Measurements directory.
     /// </summary>
     /// <returns></returns>
     public static async Task SaveMeasurements()
     {
         string path =
-            $"Measurements/data/measurement_{MeasurementProcess.StartTime.ToString("s")}.txt";           
+            $"Measurements/data/measurement_{MeasurementProcess.StartTime.ToString("s")}.txt";
         path = path.Replace(":", "");
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        await storeMeasurements(path);
+
+    }
+
+    private static async Task storeMeasurements(string path)
+    {
         using (FileStream fs = File.Create(path))
         {
             StringBuilder sb = new StringBuilder(Measurements.Count * 101);
@@ -120,15 +161,15 @@ public class MeasurementProcess
         }
     }
 
-    private static void SetupMeasurementProcess()
+    private static void SetupMeasurementProcess(bool fixedOps, object? obj)
     {
         if (System.OperatingSystem.IsMacOS())
         {
-            SetupMeasurementProcessMacOs();
+            SetupMeasurementProcessMacOs(fixedOps);
         }
         else if (System.OperatingSystem.IsWindows())
         { // TODO AMD
-            SetupMeasurementProcessWindows();
+            SetupMeasurementProcessWindows(fixedOps, obj);
         }
         else
         {
@@ -147,7 +188,7 @@ public class MeasurementProcess
     /// </summary>
     /// <returns></returns>
     [System.Runtime.Versioning.SupportedOSPlatform("macos")]
-    private static void SetupMeasurementProcessMacOs()
+    private static void SetupMeasurementProcessMacOs(bool fixedOps)
     {
         var procStartInfo = new System.Diagnostics.ProcessStartInfo
         {
@@ -202,13 +243,32 @@ public class MeasurementProcess
     }
     #endregion macOS
 
+
+    // set cts method
+    public static void set(CancellationTokenSource cts)
+    {
+        MeasurementProcess.cts = cts;
+    }
+
+    // get cts method
+    public static CancellationTokenSource get()
+    {
+        return MeasurementProcess.cts;
+    }
     #region windows
     /// <summary>
     /// Initializes the IntelPowerGadget Library and creates a Timer that reads its measurements
     /// </summary>
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    private static void SetupMeasurementProcessWindows()
+    private static void SetupMeasurementProcessWindows(bool fixedOps, object? obj)
     {
+        CancellationToken token = default(CancellationToken);
+        if (!(obj is null))
+        {
+            token = (CancellationToken)obj;
+        }
+
+
         var cpu = new System.Management.ManagementObjectSearcher("select * from Win32_Processor")
             .Get()
             .Cast<System.Management.ManagementObject>()
@@ -267,15 +327,21 @@ public class MeasurementProcess
                 (sender, e) => WindowsMeasurementHandler(sender, e, msrsForPower)
             );
             uint iterations = NumOfMeasurements;
+
             if (iterations > 0)
             {
                 timer.Elapsed += (s, e) =>
                 {
-                    if (iterations <= 0)
+                    if (iterations <= 0 || (!(obj is null) && token.IsCancellationRequested))
                     {
                         timer.Stop();
                     }
-                    iterations--;
+
+                    if (fixedOps)
+                    {
+                        iterations--;
+                    }
+
                 };
             }
             Timer = timer;

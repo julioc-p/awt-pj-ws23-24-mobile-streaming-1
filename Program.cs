@@ -36,5 +36,6 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapHub<MeasurementHub>("/measurementHub");
 app.MapHub<PlaybackHub>("/playbackHub");
+app.MapHub<AnalyticsHub>("/analyticsHub");
 
 app.Run();
