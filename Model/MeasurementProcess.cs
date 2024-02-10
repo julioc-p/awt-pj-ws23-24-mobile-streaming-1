@@ -273,7 +273,7 @@ public class MeasurementProcess
             .Get()
             .Cast<System.Management.ManagementObject>()
             .First();
-        if (((string)cpu["Name"]).StartsWith("Intel"))
+        if (((string)cpu["Name"]).Contains("Intel"))
         {
             if (!IntelPowerGadget.LibIsInitialized)
             {
