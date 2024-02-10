@@ -27,8 +27,8 @@ def process_directory(directory_path, filename_condition):
 
 def process_file(file_path):
     df = pd.read_csv(file_path, delimiter=';')
-    sum_power = df['TotalPower'].sum()
     df['TotalPower'] = df['TotalPower'].str.replace(',', '.').astype(float)
+    sum_power = df['TotalPower'].sum()
     return sum_power, len(df)
 
 def plot_bitrate_vs_power(codec, bitrates, sum_powers, directory_name):
