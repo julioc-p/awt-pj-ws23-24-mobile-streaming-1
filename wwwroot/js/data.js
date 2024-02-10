@@ -369,7 +369,7 @@ async function playAllRepresentations(adaptationSet, abrConfig) {
   }
 }
 
-async function playRepresentation(representationIndex, abrConfig, videoURL) {
+async function playRepresentation(representationIndex, abrConfig) {
   try {
     // Use a promise to wait for the PLAYBACK_ENDED event
     const playbackEndedPromise = new Promise((resolve) => {
@@ -390,6 +390,7 @@ async function playRepresentation(representationIndex, abrConfig, videoURL) {
     dashjsPlayer.updateSettings(abrConfig);
     dashjsPlayer.setQualityFor("video", representationIndex, true);
     dashjsPlayer.seek(0);
+
     updateCurrentSettings();
     startAnalyticsMeasurement();
     startPlayback();

@@ -16,7 +16,7 @@ def process_directory(directory_path, filename_condition):
 
     for filename in os.listdir(directory_path):
         file_path = os.path.join(directory_path, filename)
-        combination = filename_condition(file_path)
+        combination = filename_condition(filename)
         data_combinations.add(combination)
 
         sum_power, num_data_points = process_file(file_path)
@@ -46,6 +46,7 @@ def plot_bitrate_vs_power(codec, bitrates, sum_powers, directory_name):
     plt.legend()
      # turn plot into a png file
     plt.savefig(f'{directory_name}_{codec}_bitrate_vs_power.png')
+    plt.clf()
 
 def plot_avg_power(data_combinations, sum_powers, x_label, plot_title, directory_name):
     data_combinations = sorted(data_combinations)
@@ -63,6 +64,7 @@ def plot_avg_power(data_combinations, sum_powers, x_label, plot_title, directory
     plt.legend()
     # turn plot into a png file
     plt.savefig(f'{directory_name}_{plot_title}.png')
+    plt.clf()
 
 
 def generate_insight_by_settings(data_directory, directory_name):
@@ -98,8 +100,8 @@ def generate_insight_by_codec_bitrate(data_directory, directory_name):
     codec_bitrate_combinations, sum_powers = process_directory(data_directory, filename_condition)
 
     # Plot the average power for each combination of codec and bitrate
-    plot_avg_power(codec_bitrate_combinations, sum_powers, 'Codec x Bitrate',
-                   'Average Power Consumption for Different Codec x Bitrate Combinations', directory_name)
+    plot_avg_power(codec_bitrate_combinations, sum_powers, 'Bitrate x Codec',
+                   'Average Power Consumption for Different Bitrate x Codec Combinations', directory_name)
 
 # write a method to generate insights by bitrate
 def generate_insight_by_bitrate(data_directory, directory_name):
@@ -127,7 +129,7 @@ def generate_insight_for_directories(data_directory):
 
 if __name__ == "__main__":
     # Path to the directory containing the data files
-    data_directory = 'Measurements/data'
+    data_directory = "Measurements/data"
 
     # Generate insights
     generate_insight_for_directories(data_directory)
