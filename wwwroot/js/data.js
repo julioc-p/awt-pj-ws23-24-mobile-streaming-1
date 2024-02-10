@@ -494,13 +494,8 @@ function saveVideoUrl() {
   var videoURLInput = document.getElementById("videoUrl");
   var videoURL = videoURLInput.value;
 
-  if (isValidURL(videoURL)) {
-    addURLToList(videoURL);
-    videoURLInput.value = "";
-  } else {
-    videoURLInput.setCustomValidity("Please enter a valid URL");
-    videoURLInput.reportValidity();
-  }
+  addURLToList(videoURL);
+  videoURLInput.value = "";
 }
 
 // Function to check if a string is a valid URL
