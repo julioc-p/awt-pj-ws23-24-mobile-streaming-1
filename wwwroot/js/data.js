@@ -10,47 +10,49 @@ const connectionPlaybackHub = new signalR.HubConnectionBuilder()
 const analyticsHub = new signalR.HubConnectionBuilder()
   .withUrl("/analyticsHub")
   .build();
-const connectionPythonScriptHub = new signalR.HubConnectionBuilder().withUrl("/pythonScriptHub").build();
+const connectionPythonScriptHub = new signalR.HubConnectionBuilder()
+  .withUrl("/pythonScriptHub")
+  .build();
 
 // chart config
 const ctx = document.getElementById("myChart");
 const myChart = new Chart(ctx, {
-    type: "line",
-    data: {
-        labels: [],
-        datasets: [
-            {
-                label: "Total Power",
-                data: [],
-                borderColor: "blue",
-            },
-        ],
+  type: "line",
+  data: {
+    labels: [],
+    datasets: [
+      {
+        label: "Total Power",
+        data: [],
+        borderColor: "blue",
+      },
+    ],
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      title: {
+        display: true,
+        text: "Power Consumption",
+      },
     },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            title: {
-                display: true,
-                text: "Power Consumption",
-            },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Time (s)",
         },
-        scales: {
-            x: {
-                title: {
-                    display: true,
-                    text: "Time (s)",
-                },
-            },
-            y: {
-                title: {
-                    display: true,
-                    text: "Power Consumption (W)",
-                },
-                min: 0,
-            },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Power Consumption (W)",
         },
+        min: 0,
+      },
     },
+  },
 });
 
 // player variable
@@ -58,7 +60,7 @@ var dashjsPlayer;
 
 // disable startMeasurementButton before connection to server is started
 const startMeasurementButton = document.getElementById(
-    "startMeasurementButton"
+  "startMeasurementButton"
 );
 startMeasurementButton.disabled = true;
 
@@ -68,283 +70,289 @@ stopAnalyticsButton.disabled = true;
 
 // when event "ReceiveMeasurement" occurs it updates the powerConsumption text field and adds the value to the dataList text field
 connectionMeasurementHub.on(
-    "ReceiveMeasurement",
-    function (totalPower, timeSinceStart) {
-        // console.log(totalPower);
-        myChart.data.labels.push(timeSinceStart);
-        // console.log(myChart.data.labels);
-        // console.log(myChart.data.datasets);
-        myChart.data.datasets.forEach(function (dataset) {
-            dataset.data.push(totalPower);
-        });
-        myChart.update();
-    }
+  "ReceiveMeasurement",
+  function (totalPower, timeSinceStart) {
+    // console.log(totalPower);
+    myChart.data.labels.push(timeSinceStart);
+    // console.log(myChart.data.labels);
+    // console.log(myChart.data.datasets);
+    myChart.data.datasets.forEach(function (dataset) {
+      dataset.data.push(totalPower);
+    });
+    myChart.update();
+  }
 );
 
 // start connection to measurementHub and if successful enable startMeasurementButton
 connectionMeasurementHub
-    .start()
-    .then(function () {
-        startMeasurementButton.disabled = false;
-    })
-    .catch(function (err) {
-        return console.error(err.toString());
-    });
+  .start()
+  .then(function () {
+    startMeasurementButton.disabled = false;
+  })
+  .catch(function (err) {
+    return console.error(err.toString());
+  });
 
 // start connection to playbackHub
 connectionPlaybackHub.start().catch(function (err) {
-    return console.error(err.toString());
+  return console.error(err.toString());
 });
 
 //start connection to analyticsHub
 analyticsHub.start().catch(function (err) {
-    return console.error(err.toString());
+  return console.error(err.toString());
 });
 
-var currentVideo = ""
-var currentSettings = ""
-
+var currentVideo = "";
+var currentSettings = "";
 
 //start connection to pythonScriptHub
 connectionPythonScriptHub.start().catch(function (err) {
-    console.log("connection to pyhub started")
-    return console.error(err.toString());
-})
+  console.log("connection to pyhub started");
+  return console.error(err.toString());
+});
 
 // bind buttons on webpage to class functions on backend
 startMeasurementButton.addEventListener("click", function (event) {
-    connectionMeasurementHub
-        .send("StartMeasurementFixedOps")
-        .catch(function (err) {
-            console.error(err.toString());
-        });
-    event.preventDefault();
+  connectionMeasurementHub
+    .send("StartMeasurementFixedOps")
+    .catch(function (err) {
+      console.error(err.toString());
+    });
+  event.preventDefault();
 });
 document
-    .getElementById("clearMeasurementsButton")
-    .addEventListener("click", function (event) {
-        clearMeasurements();
-    });
+  .getElementById("clearMeasurementsButton")
+  .addEventListener("click", function (event) {
+    clearMeasurements();
+  });
 document
-    .getElementById("saveMeasurementsButton")
-    .addEventListener("click", function (event) {
-        connectionMeasurementHub.invoke("SaveMeasurements").catch(function (err) {
-            console.error(err.toString());
-        });
+  .getElementById("saveMeasurementsButton")
+  .addEventListener("click", function (event) {
+    connectionMeasurementHub.invoke("SaveMeasurements").catch(function (err) {
+      console.error(err.toString());
     });
+  });
 
 // function to clear meassurements
 function clearMeasurements() {
-    myChart.data.labels.length = 0; // empty chart label array
-    myChart.data.datasets.forEach(function (dataset) {
-        dataset.data.length = 0;
-    });
-    myChart.update();
-    connectionMeasurementHub.invoke("ClearMeasurements").catch(function (err) {
-        console.error(err.toString());
-    });
+  myChart.data.labels.length = 0; // empty chart label array
+  myChart.data.datasets.forEach(function (dataset) {
+    dataset.data.length = 0;
+  });
+  myChart.update();
+  connectionMeasurementHub.invoke("ClearMeasurements").catch(function (err) {
+    console.error(err.toString());
+  });
 }
 
 var numberOfMeasurementsForm = document.getElementById(
-    "numberOfMeasurementsForm"
+  "numberOfMeasurementsForm"
 );
 numberOfMeasurementsForm.addEventListener(
-    "submit",
-    function (event) {
-        event.preventDefault();
-        // if (!numberOfMeasurementsForm.checkValidity()) {
-        event.stopPropagation();
-        // }
-        numberOfMeasurementsForm.classList.add("was-validated");
-        if (numberOfMeasurementsForm.checkValidity()) {
-            var inputField = document.getElementById("numberOfMeasurementsInput");
-            connectionMeasurementHub.invoke(
-                "SaveNumberOfMeasurements",
-                Number(inputField.value)
-            );
-        }
-    },
-    false
+  "submit",
+  function (event) {
+    event.preventDefault();
+    // if (!numberOfMeasurementsForm.checkValidity()) {
+    event.stopPropagation();
+    // }
+    numberOfMeasurementsForm.classList.add("was-validated");
+    if (numberOfMeasurementsForm.checkValidity()) {
+      var inputField = document.getElementById("numberOfMeasurementsInput");
+      connectionMeasurementHub.invoke(
+        "SaveNumberOfMeasurements",
+        Number(inputField.value)
+      );
+    }
+  },
+  false
 );
 
 var videoUrlsForm = document.getElementById("videoUrlsForm");
 // add event listener to videoUrlsForm to prevent default behaviour and validate input
 videoUrlsForm.addEventListener(
-    "submit",
-    function (event) {
-        event.preventDefault();
+  "submit",
+  function (event) {
+    event.preventDefault();
 
-        event.stopPropagation();
+    event.stopPropagation();
 
-        saveVideoUrl();
-    },
-    false
+    saveVideoUrl();
+  },
+  false
 );
 
 // add event listener to startAnalyticsButton to start analytics
 document
-    .getElementById("startAnalyticsButton")
-    .addEventListener("click", async function (event) {
-        // Disable the "Start Analytics" button
-        this.disabled = true;
+  .getElementById("startAnalyticsButton")
+  .addEventListener("click", async function (event) {
+    // Disable the "Start Analytics" button
+    this.disabled = true;
 
-        // Disable all buttons and inputs
-        disableUI();
+    // Disable all buttons and inputs
+    disableUI();
 
-        // Disable all ways of user interaction with the dash player
-        disablePlayerInteraction();
+    // Disable all ways of user interaction with the dash player
+    disablePlayerInteraction();
 
-        // Enable the "Stop Analytics" button
-        stopAnalyticsButton.disabled = false;
-        // Iterate over the set of unique URLs and start analytics for each
-        await startAnalyticsForAllVideos();
-
-        //disable stop analytics button
-        stopAnalyticsButton.disabled = true;
-    });
-async function startAnalyticsForAllVideos() {
-    // If there are no videos, use the current video
-    if (uniqueURLs.size === 0) {
-        createNewFolder(currentVideo);
-        await startPlaybackWithAllSettings();
-        return;
-    }
+    // Enable the "Stop Analytics" button
+    stopAnalyticsButton.disabled = false;
     // Iterate over the set of unique URLs and start analytics for each
-    for (const videoURL of uniqueURLs) {
-        // Create a new folder for the video, take the name from the URL take out mpd
-        currentVideo = videoURL.split("/").pop().split(".")[0];
-        createNewFolder(currentVideo);
-        await changeVideo(videoURL);
-        await startAnalyticsForVideo(videoURL);
-    }
+    await startAnalyticsForAllVideos();
+
+    //disable stop analytics button
+    stopAnalyticsButton.disabled = true;
+  });
+async function startAnalyticsForAllVideos() {
+  // If there are no videos, use the current video
+  if (uniqueURLs.size === 0) {
+    createNewFolder(currentVideo);
+    await startPlaybackWithAllSettings();
+    return;
+  }
+  // Iterate over the set of unique URLs and start analytics for each
+  for (const videoURL of uniqueURLs) {
+    // Create a new folder for the video, take the name from the URL take out mpd
+    currentVideo = videoURL.split("/").pop().split(".")[0];
+    createNewFolder(currentVideo);
+    await changeVideo(videoURL);
+    await startAnalyticsForVideo(videoURL);
+  }
 }
 async function startAnalyticsForVideo(videoURL) {
-    await startPlaybackWithAllSettings();
+  await startPlaybackWithAllSettings();
 }
 
 // function to create a new folder in meassurements folder
 function createNewFolder(name) {
-    analyticsHub
-        .invoke("CreateNewFolder", name)
-        .catch(function (err) {
-            console.error(err.toString());
-        })
-        .then(function () {
-            console.log("folder created");
-        });
+  analyticsHub
+    .invoke("CreateNewFolder", name)
+    .catch(function (err) {
+      console.error(err.toString());
+    })
+    .then(function () {
+      console.log("folder created");
+    });
 }
 
 async function changeVideo(url) {
-    const manifestLoadedPromise = new Promise((resolve) => {
-        function manifestLoadedHandler() {
-            dashjsPlayer.off(
-                dashjs.MediaPlayer.events.BUFFER_LOADED,
-                manifestLoadedHandler
-            );
-            resolve();
-        }
-        dashjsPlayer.on(
-            dashjs.MediaPlayer.events.BUFFER_LOADED,
-            manifestLoadedHandler
-        );
-    });
-    dashjsPlayer.reset();
-    var videoElement = document.querySelector(".videoContainer video");
-    dashjsPlayer.attachView(videoElement);
-    dashjsPlayer.attachSource(url);
-    await manifestLoadedPromise;
+  const manifestLoadedPromise = new Promise((resolve) => {
+    function manifestLoadedHandler() {
+      dashjsPlayer.off(
+        dashjs.MediaPlayer.events.BUFFER_LOADED,
+        manifestLoadedHandler
+      );
+      resolve();
+    }
+    dashjsPlayer.on(
+      dashjs.MediaPlayer.events.BUFFER_LOADED,
+      manifestLoadedHandler
+    );
+  });
+  dashjsPlayer.reset();
+  var videoElement = document.querySelector(".videoContainer video");
+  dashjsPlayer.attachView(videoElement);
+  dashjsPlayer.attachSource(url);
+  await manifestLoadedPromise;
 }
 
 function disableUI() {
-    var allButtons = document.querySelectorAll("button");
-    allButtons.forEach(function (button) {
-        button.disabled = true;
-    });
+  var allButtons = document.querySelectorAll("button");
+  allButtons.forEach(function (button) {
+    button.disabled = true;
+  });
 
-    var allInputs = document.querySelectorAll("input");
-    allInputs.forEach(function (input) {
-        input.disabled = true;
-    });
+  var allInputs = document.querySelectorAll("input");
+  allInputs.forEach(function (input) {
+    input.disabled = true;
+  });
 
-    // disable navbar
-    document.getElementById("navbarMain").style.pointerEvents = "none";
-    document.getElementById("mainNavbarWrapper").style.cursor = "not-allowed";
+  // disable navbar
+  document.getElementById("navbarMain").style.pointerEvents = "none";
+  document.getElementById("mainNavbarWrapper").style.cursor = "not-allowed";
 }
 
 // Utility function to disable all ways of user interaction with the dash player
 function disablePlayerInteraction() {
-    document.getElementById("videoController").style.pointerEvents = "none";
-    document.getElementById("videoControllerWrapper").style.cursor =
-        "not-allowed";
+  document.getElementById("videoController").style.pointerEvents = "none";
+  document.getElementById("videoControllerWrapper").style.cursor =
+    "not-allowed";
 }
 
 // when stopAnalyticsButton is clicked, enable all buttons of the ui except for the stopAnalyticsButton
 stopAnalyticsButton.addEventListener("click", async function (event) {
-    dashjsPlayer.seek(0);
-    enableUI();
-    stopPlayback();
-    stopAnalyticsMeassurement();
-    await saveAnalyticsMeasurements();
-    clearMeasurements();
-    alert("Measurements for " + currentVideo + " have been saved in folder" + "Measurements/data/" + currentVideo);
+  dashjsPlayer.seek(0);
+  enableUI();
+  stopPlayback();
+  stopAnalyticsMeassurement();
+  await saveAnalyticsMeasurements();
+  clearMeasurements();
+  // call python script to create the video
+  connectionPythonScriptHub.invoke("ExecutePythonScript").catch(function (err) {
+    console.error(err.toString());
+  });
+  alert(
+    "Measurements for " +
+      currentVideo +
+      " have been saved in folder" +
+      "Measurements/data/" +
+      currentVideo
+  );
 });
 
 function stopAnalyticsMeassurement() {
-    analyticsHub
-        .invoke("StopAnalitycs")
-        .catch(function (err) {
-            console.error(err.toString());
-        });
-
+  analyticsHub.invoke("StopAnalitycs").catch(function (err) {
+    console.error(err.toString());
+  });
 }
 
 async function saveAnalyticsMeasurements() {
-    connectionMeasurementHub
-        .invoke("SaveMeasurementsInFolder", currentVideo, currentSettings)
-        .catch(function (err) {
-            console.error(err.toString());
-        });
+  connectionMeasurementHub
+    .invoke("SaveMeasurementsInFolder", currentVideo, currentSettings)
+    .catch(function (err) {
+      console.error(err.toString());
+    });
 }
 
 // method to enable all ui clickable elements
 function enableUI() {
-    var allButtons = document.querySelectorAll("button");
-    allButtons.forEach(function (button) {
-        button.disabled = false;
-    });
+  var allButtons = document.querySelectorAll("button");
+  allButtons.forEach(function (button) {
+    button.disabled = false;
+  });
 
-    var allInputs = document.querySelectorAll("input");
-    allInputs.forEach(function (input) {
-        input.disabled = false;
-    });
+  var allInputs = document.querySelectorAll("input");
+  allInputs.forEach(function (input) {
+    input.disabled = false;
+  });
 
-    // enable all ways of user to interact with dash player, just keep playing videos
-    document.getElementById("videoController").style.pointerEvents = "auto";
-    document.getElementById("videoControllerWrapper").style.cursor = "auto";
+  // enable all ways of user to interact with dash player, just keep playing videos
+  document.getElementById("videoController").style.pointerEvents = "auto";
+  document.getElementById("videoControllerWrapper").style.cursor = "auto";
 
-    // enable navbar
-    document.getElementById("navbarMain").style.pointerEvents = "auto";
-    document.getElementById("mainNavbarWrapper").style.cursor = "auto";
+  // enable navbar
+  document.getElementById("navbarMain").style.pointerEvents = "auto";
+  document.getElementById("mainNavbarWrapper").style.cursor = "auto";
 
   stopAnalyticsButton.disabled = true;
 }
 
 // method to start playback of with all the different settings in the mpd file. the different resolutions, bitrates, etc.
 async function startPlaybackWithAllSettings() {
-    const adaptationSets = dashjsPlayer.getTracksFor("video");
-    const abrConfig = {
-        streaming: {
-            abr: {
-                autoSwitchBitrate: {
-                    video: false,
-                },
-            },
+  const adaptationSets = dashjsPlayer.getTracksFor("video");
+  const abrConfig = {
+    streaming: {
+      abr: {
+        autoSwitchBitrate: {
+          video: false,
         },
-    };
+      },
+    },
+  };
 
-    for (const adaptationSet of adaptationSets) {
-        await playAllRepresentations(adaptationSet, abrConfig);
-    }
+  for (const adaptationSet of adaptationSets) {
+    await playAllRepresentations(adaptationSet, abrConfig);
+  }
 
   enableUI();
 }
@@ -353,39 +361,38 @@ async function playAllRepresentations(adaptationSet, abrConfig) {
   const representations = adaptationSet.bitrateList;
   dashjsPlayer.setCurrentTrack(adaptationSet);
 
-    //console.log(representations);
+  //console.log(representations);
 
-    for (var j = 0; j < representations.length; j++) {
-        //console.log(representations[j]);
-        await playRepresentation(j, abrConfig);
-    }
+  for (var j = 0; j < representations.length; j++) {
+    //console.log(representations[j]);
+    await playRepresentation(j, abrConfig);
+  }
 }
 
 async function playRepresentation(representationIndex, abrConfig, videoURL) {
-    try {
-        // Use a promise to wait for the PLAYBACK_ENDED event
-        const playbackEndedPromise = new Promise((resolve) => {
-            function playbackEndedHandler() {
-                dashjsPlayer.off(
-                    dashjs.MediaPlayer.events.PLAYBACK_ENDED,
-                    playbackEndedHandler
-                );
-                resolve();
-            }
-            dashjsPlayer.on(
-                dashjs.MediaPlayer.events.PLAYBACK_ENDED,
-                playbackEndedHandler
-            );
-        });
-       
-      
-        // Update settings and start playback
-        dashjsPlayer.updateSettings(abrConfig);
-        dashjsPlayer.setQualityFor("video", representationIndex, true);
-        dashjsPlayer.seek(0);
-        updateCurrentSettings();
-        startAnalyticsMeasurement();
-        startPlayback();
+  try {
+    // Use a promise to wait for the PLAYBACK_ENDED event
+    const playbackEndedPromise = new Promise((resolve) => {
+      function playbackEndedHandler() {
+        dashjsPlayer.off(
+          dashjs.MediaPlayer.events.PLAYBACK_ENDED,
+          playbackEndedHandler
+        );
+        resolve();
+      }
+      dashjsPlayer.on(
+        dashjs.MediaPlayer.events.PLAYBACK_ENDED,
+        playbackEndedHandler
+      );
+    });
+
+    // Update settings and start playback
+    dashjsPlayer.updateSettings(abrConfig);
+    dashjsPlayer.setQualityFor("video", representationIndex, true);
+    dashjsPlayer.seek(0);
+    updateCurrentSettings();
+    startAnalyticsMeasurement();
+    startPlayback();
 
     // Wait for the PLAYBACK_ENDED event
     await playbackEndedPromise;
@@ -395,31 +402,44 @@ async function playRepresentation(representationIndex, abrConfig, videoURL) {
     // Stop playback regardless of success or failure
     stopPlayback();
     // Stop analytics measurement
-        stopAnalyticsMeassurement();
-        saveAnalyticsMeasurements();
-        clearMeasurements();
+    stopAnalyticsMeassurement();
+    saveAnalyticsMeasurements();
+    clearMeasurements();
   }
 }
 
 function updateCurrentSettings() {
-    try {
-        var streamInfo = dashjsPlayer.getActiveStream().getStreamInfo();;
-        var dashAdapter = dashjsPlayer.getDashAdapter();
-        const periodIdx = streamInfo.index;
-        var adaptation = dashAdapter.getAdaptationForType(periodIdx, 'video', streamInfo);
-        var dashMetrics = dashjsPlayer.getDashMetrics();
-        var repSwitch = dashMetrics.getCurrentRepresentationSwitch('video', true);
-        var currentRep = adaptation.Representation_asArray.find(function (rep) {
-            return rep.id === repSwitch.to
-        })
-        var frameRate = currentRep.frameRate;
-        // round the bandwidth to kpbs
-        var bandwidth = Math.round(currentRep.bandwidth / 1000);
-        // update current settings with the format: resolution_fps_bitrate_codec
-        currentSettings = currentRep.width + "x" + currentRep.height + "_" + frameRate + "fps_" + bandwidth + "kbps_" + currentRep.codecs;
-    }catch (error) {
-        console.error("An error occurred while updatting settings:", error);
-    }
+  try {
+    var streamInfo = dashjsPlayer.getActiveStream().getStreamInfo();
+    var dashAdapter = dashjsPlayer.getDashAdapter();
+    const periodIdx = streamInfo.index;
+    var adaptation = dashAdapter.getAdaptationForType(
+      periodIdx,
+      "video",
+      streamInfo
+    );
+    var dashMetrics = dashjsPlayer.getDashMetrics();
+    var repSwitch = dashMetrics.getCurrentRepresentationSwitch("video", true);
+    var currentRep = adaptation.Representation_asArray.find(function (rep) {
+      return rep.id === repSwitch.to;
+    });
+    var frameRate = currentRep.frameRate;
+    // round the bandwidth to kpbs
+    var bandwidth = Math.round(currentRep.bandwidth / 1000);
+    // update current settings with the format: resolution_fps_bitrate_codec
+    currentSettings =
+      currentRep.width +
+      "x" +
+      currentRep.height +
+      "_" +
+      frameRate +
+      "fps_" +
+      bandwidth +
+      "kbps_" +
+      currentRep.codecs;
+  } catch (error) {
+    console.error("An error occurred while updatting settings:", error);
+  }
 }
 
 // method to start analytics measurement
@@ -457,16 +477,15 @@ function playbackStarted() {
     });
 }
 function playbackPaused() {
-    connectionPlaybackHub
-        .invoke("StopPlayback")
-        .catch(function (err) {
-            console.error(err.toString());
-        })
-        .then(function () {
-            console.log("playback paused");
-        });
+  connectionPlaybackHub
+    .invoke("StopPlayback")
+    .catch(function (err) {
+      console.error(err.toString());
+    })
+    .then(function () {
+      console.log("playback paused");
+    });
 }
-
 
 var uniqueURLs = new Set();
 
@@ -538,12 +557,12 @@ function checkDisplay() {
 }
 // init function to run on pageload
 function init() {
-    // https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod.mpd
-    var url = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
-    currentVideo = url.split("/").pop().split(".")[0];
-    var videoElement = document.querySelector(".videoContainer video");
-    var player = dashjs.MediaPlayer().create();
-    dashjsPlayer = player;
+  // https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod.mpd
+  var url = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
+  currentVideo = url.split("/").pop().split(".")[0];
+  var videoElement = document.querySelector(".videoContainer video");
+  var player = dashjs.MediaPlayer().create();
+  dashjsPlayer = player;
 
   player.initialize(videoElement, url, false);
   var controlbar = new ControlBar(player);
@@ -554,12 +573,12 @@ function init() {
         fastSwitchEnabled: true /* enables buffer replacement when switching bitra
                 
                 tes for faster switching */,
-            },
-            scheduling: {
-                scheduleWhilePaused: false /* stops the player from loading segments while paused */,
-            },
-        },
-    });
-    player.on(dashjs.MediaPlayer.events["PLAYBACK_STARTED"], playbackStarted);
-    player.on(dashjs.MediaPlayer.events["PLAYBACK_PAUSED"], playbackPaused);
+      },
+      scheduling: {
+        scheduleWhilePaused: false /* stops the player from loading segments while paused */,
+      },
+    },
+  });
+  player.on(dashjs.MediaPlayer.events["PLAYBACK_STARTED"], playbackStarted);
+  player.on(dashjs.MediaPlayer.events["PLAYBACK_PAUSED"], playbackPaused);
 }

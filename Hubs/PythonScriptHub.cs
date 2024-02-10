@@ -9,8 +9,8 @@ public class PythonScriptHub : Hub
     {
         Console.WriteLine("executing script");
         // changes need to be made to this when run on a different machine, keep in mind windows uses backslash
-        string pythonPath = @"/Users/marvinseidel/opt/anaconda3/bin/python3";
-        string scriptPath = @"./PythonScripts/test.py";
+        string pythonPath = @"C:\Users\perez\AppData\Local\Programs\Python\Python310\python.exe";
+        string scriptPath = @".\PythonScripts\analysis_script.py";
 
         // Create a ProcessStartInfo object
         ProcessStartInfo startInfo = new ProcessStartInfo
