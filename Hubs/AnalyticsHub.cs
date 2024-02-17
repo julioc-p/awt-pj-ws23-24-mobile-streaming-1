@@ -1,10 +1,10 @@
 // a stop analytics hub with a method to call stop meassurement from meassurement proces
-using awt_pj_ss23_green_streaming_1.Model;
+using awt_pj_ws23_24_mobile_streaming_1.Model;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.IO;
 
-namespace awt_pj_ss23_green_streaming_1.Hubs;
+namespace awt_pj_ws23_24_mobile_streaming_1.Hubs;
 
 /// <summary>
 /// Represents a hub for stopping analytics measurement process.

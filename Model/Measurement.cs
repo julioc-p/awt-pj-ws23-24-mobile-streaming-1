@@ -1,4 +1,4 @@
-namespace awt_pj_ss23_green_streaming_1.Model
+namespace awt_pj_ws23_24_mobile_streaming_1.Model
 {
     public class Measurement
     {

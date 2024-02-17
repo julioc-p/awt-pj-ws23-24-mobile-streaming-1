@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace awt_pj_ss23_green_streaming_1.Libs;
+namespace awt_pj_ws23_24_mobile_streaming_1.Libs;
 
 public class IntelPowerGadget
 {

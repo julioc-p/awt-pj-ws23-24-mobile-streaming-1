@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
-using awt_pj_ss23_green_streaming_1.Model;
+using awt_pj_ws23_24_mobile_streaming_1.Model;
 
-namespace awt_pj_ss23_green_streaming_1.Hubs
+namespace awt_pj_ws23_24_mobile_streaming_1.Hubs
 {
     public class MeasurementHub : Hub
     {

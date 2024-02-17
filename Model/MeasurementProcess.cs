@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Text;
 using System.Timers;
-using awt_pj_ss23_green_streaming_1.Libs;
+using awt_pj_ws23_24_mobile_streaming_1.Libs;
 
-namespace awt_pj_ss23_green_streaming_1.Model;
+namespace awt_pj_ws23_24_mobile_streaming_1.Model;
 
 public class MeasurementProcess
 {
@@ -273,7 +273,7 @@ public class MeasurementProcess
             .Get()
             .Cast<System.Management.ManagementObject>()
             .First();
-        if (((string)cpu["Name"]).StartsWith("Intel"))
+        if (((string)cpu["Name"]).Contains("Intel"))
         {
             if (!IntelPowerGadget.LibIsInitialized)
             {
