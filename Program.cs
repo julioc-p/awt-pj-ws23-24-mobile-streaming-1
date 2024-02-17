@@ -1,4 +1,4 @@
-using awt_pj_ss23_green_streaming_1.Hubs;
+using awt_pj_ws23_24_mobile_streaming_1.Hubs;
 using Microsoft.AspNetCore.StaticFiles;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,10 +1,10 @@
 ﻿using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using awt_pj_ss23_green_streaming_1.Libs;
+using awt_pj_ws23_24_mobile_streaming_1.Libs;
 using System.Text;
 
-namespace awt_pj_ss23_green_streaming_1.Pages;
+namespace awt_pj_ws23_24_mobile_streaming_1.Pages;
 
 public class IndexModel : PageModel
 {

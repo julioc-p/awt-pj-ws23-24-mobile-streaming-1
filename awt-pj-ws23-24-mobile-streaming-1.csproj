@@ -4,7 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>awt_pj_ss23_green_streaming_1</RootNamespace>
+    <RootNamespace>awt_pj_ws23_24_mobile_streaming_1</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

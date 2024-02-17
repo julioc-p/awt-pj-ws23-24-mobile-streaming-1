@@ -202,6 +202,11 @@ document
 
     //disable stop analytics button
     stopAnalyticsButton.disabled = true;
+    connectionPythonScriptHub
+      .invoke("ExecutePythonScript")
+      .catch(function (err) {
+        console.error(err.toString());
+      });
   });
 async function startAnalyticsForAllVideos() {
   // If there are no videos, use the current video
@@ -407,6 +412,10 @@ async function playRepresentation(representationIndex, abrConfig) {
     saveAnalyticsMeasurements();
     clearMeasurements();
   }
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function updateCurrentSettings() {
