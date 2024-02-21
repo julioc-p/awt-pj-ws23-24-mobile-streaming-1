@@ -27,6 +27,8 @@ def process_directory(directory_path, filename_condition):
 
 def process_file(file_path):
     df = pd.read_csv(file_path, delimiter=';')
+    if len(df) == 0:
+        raise Exception("No data in the file")
     if type(df['TotalPower'][0]) == str:
         df['TotalPower'] = df['TotalPower'].str.replace(',', '.').astype(float)
     sum_power = df['TotalPower'].sum()
