@@ -123,7 +123,6 @@ def generate_insight_for_directories(data_directory):
     for directory in os.listdir(data_directory):
         directory_path = os.path.join(data_directory, directory)
         if os.path.isdir(directory_path):
-            print(f'Generating insights for {directory}')
             generate_insight_by_settings(directory_path, directory)
             generate_insight_by_resolution(directory_path, directory)
             generate_insight_by_codec_bitrate(directory_path, directory)
@@ -136,7 +135,3 @@ if __name__ == "__main__":
 
     # Generate insights
     generate_insight_for_directories(data_directory)
-    # generate_insight_by_settings(data_directory)
-    # generate_insight_by_resolution(data_directory)
-    # generate_insight_by_codec_bitrate(data_directory)
-    # generate_insight_by_bitrate(data_directory)

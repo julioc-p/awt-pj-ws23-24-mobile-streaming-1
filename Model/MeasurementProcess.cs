@@ -81,8 +81,6 @@ public class MeasurementProcess
 
     public static void Stop()
     {
-        // print some debug info
-        System.Console.WriteLine("Stopping Measurement Process");
         // Add code to stop the measurement process (stop timers, clear resources, etc.)
         if (System.OperatingSystem.IsMacOS())
         {

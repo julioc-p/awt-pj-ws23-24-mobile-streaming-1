@@ -30,7 +30,6 @@ namespace awt_pj_ws23_24_mobile_streaming_1.Hubs
 
             MeasurementProcess.ProcessMeasurement = SendMeasurement;
             MeasurementProcess.Start(true, null);
-            Console.WriteLine("Started Measurement");
             await MeasurementProcess.WaitForExitAsync();
         }
 
@@ -47,17 +46,8 @@ namespace awt_pj_ws23_24_mobile_streaming_1.Hubs
             MeasurementProcess.set(cts);
             //MeasurementProcess.HubContext = hubc;
             MeasurementProcess.Start(false, cts.Token);
-
-            
-            Console.WriteLine("Started Measurement");
             await MeasurementProcess.WaitForExitAsync();
-
         }
-
-
-
-
-
 
         /// <summary>
         /// Saves measurements collected by <c>MeasurementProcess</c>
@@ -65,9 +55,7 @@ namespace awt_pj_ws23_24_mobile_streaming_1.Hubs
         /// <returns></returns>
         public async Task SaveMeasurementsInFolder(string folderName, string currentSettings)
         {
-            Console.WriteLine("Saving Measurements in folder: " + folderName);
             await MeasurementProcess.SaveMeasurements(folderName, currentSettings);
-            Console.WriteLine("Saved Measurement");
         }
 
         /// <summary>
@@ -77,7 +65,7 @@ namespace awt_pj_ws23_24_mobile_streaming_1.Hubs
         public async Task SaveMeasurements()
         {
             await MeasurementProcess.SaveMeasurements();
-            Console.WriteLine("Saved Measurement");
+
         }
 
         public void SaveNumberOfMeasurements(uint numOfMeasurements)
