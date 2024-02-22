@@ -3,11 +3,8 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-
-def process_data(file_path):
-    df = pd.read_csv(file_path, delimiter=';')
-    avg_power = df[df['VideoPlaying'] == True]['TotalPower'].mean()
-    return avg_power
+import seaborn as sns
+import numpy as np
 
 def process_directory(directory_path, filename_condition):
     data_combinations = set()
@@ -24,6 +21,17 @@ def process_directory(directory_path, filename_condition):
         sum_powers[combination].append([sum_power, num_data_points])
 
     return data_combinations, sum_powers
+
+def get_avg_power(data_combinations, sum_powers):
+    avg_powers = {}
+    for combination in data_combinations:
+        sum_combination = 0
+        num_data_points = 0
+        for power, data_points in sum_powers[combination]:
+            sum_combination += power
+            num_data_points += data_points
+        avg_powers[combination] = sum_combination / num_data_points
+    return avg_powers
 
 def process_file(file_path):
     df = pd.read_csv(file_path, delimiter=';')
@@ -69,18 +77,51 @@ def plot_avg_power(data_combinations, sum_powers, x_label, plot_title, directory
     plt.savefig(f'{directory_name}_{plot_title}.png')
     plt.clf()
 
+def create_dataframe(avg_powers):
+    l = []
+    for key, value in avg_powers.items():
+        l_tmp = []
+        l_tmp.extend(key.split('_')[:4])
+        l_tmp.append(value)
+        l.append(l_tmp)
+    df = pd.DataFrame(l, columns=['Resolution', 'FPS', 'Bitrate', 'Codec', 'Average Power'])
+    df["Resolution"]=df["Resolution"].astype('category').cat.codes
+    df["FPS"]=df["FPS"].astype('category').cat.codes
+    df["Bitrate"]=df["Bitrate"].astype('category').cat.codes
+    df["Codec"]=df["Codec"].astype('category').cat.codes
+    print(df)
+    return df
+
+import matplotlib.pyplot as plt
+
+def plot_corr_heat_map(df, directory_name):
+    corr = df.corr()
+    # get the last column of the correlation matrix for the avg power
+
+    corr = corr.iloc[[4]]
+    corr = corr.abs()
+    #plt.matshow(corr)
+    sns.heatmap(corr, annot=True, fmt="g", cmap='viridis')
+    # turn plot into a png file
+    plt.savefig(f'{directory_name}_correlation_heat_map.png')
+    plt.clf()
 
 def generate_insight_by_settings(data_directory, directory_name):
     def filename_condition(filename):
-        settings = filename.split('_')[1:]
+        settings = filename.split('_')[1:5]
         return '_'.join(settings)
 
     # Process files in the given directory
     settings_combinations, sum_powers = process_directory(data_directory, filename_condition)
-
+    avg_powers = get_avg_power(settings_combinations, sum_powers)
     # Plot the average power for each combination of settings
     plot_avg_power(settings_combinations, sum_powers, 'Settings (Codec_Resolution_Bitrate_FPS)',
                    'Average Power Consumption for Different Settings', directory_name)
+    # create a dataframe with one column per setting and one column for the average powe
+    df = create_dataframe(avg_powers)
+    plot_corr_heat_map(df, directory_name)
+
+    
 
 def generate_insight_by_resolution(data_directory, directory_name):
     def filename_condition(filename):
