@@ -67,7 +67,7 @@ namespace awt_pj_ws23_24_mobile_streaming_1.Hubs
         {
             Console.WriteLine("Saving Measurements in folder: " + folderName);
             await MeasurementProcess.SaveMeasurements(folderName, currentSettings);
-            Console.WriteLine("Saved Measurment");
+            Console.WriteLine("Saved Measurement");
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace awt_pj_ws23_24_mobile_streaming_1.Hubs
         public async Task SaveMeasurements()
         {
             await MeasurementProcess.SaveMeasurements();
-            Console.WriteLine("Saved Measurment");
+            Console.WriteLine("Saved Measurement");
         }
 
         public void SaveNumberOfMeasurements(uint numOfMeasurements)

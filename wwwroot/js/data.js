@@ -57,6 +57,8 @@ const myChart = new Chart(ctx, {
 
 // player variable
 var dashjsPlayer;
+// controlbar variable
+var controlbar;
 
 // disable startMeasurementButton before connection to server is started
 const startMeasurementButton = document.getElementById(
@@ -182,6 +184,10 @@ videoUrlsForm.addEventListener(
   false
 );
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 // add event listener to startAnalyticsButton to start analytics
 document
   .getElementById("startAnalyticsButton")
@@ -210,9 +216,12 @@ document
   });
 async function startAnalyticsForAllVideos() {
   // If there are no videos, use the current video
+  controlbar.enterFullScreen();
   if (uniqueURLs.size === 0) {
     createNewFolder(currentVideo);
     await startPlaybackWithAllSettings();
+    controlbar.exitFullScreen();
+    dashjsPlayer.seek(0);
     return;
   }
   // Iterate over the set of unique URLs and start analytics for each
@@ -221,10 +230,13 @@ async function startAnalyticsForAllVideos() {
     currentVideo = videoURL.split("/").pop().split(".")[0];
     createNewFolder(currentVideo);
     await changeVideo(videoURL);
-    await startAnalyticsForVideo(videoURL);
+    await startAnalyticsForVideo();
   }
+
+  controlbar.exitFullScreen();
+  dashjsPlayer.seek(0);
 }
-async function startAnalyticsForVideo(videoURL) {
+async function startAnalyticsForVideo() {
   await startPlaybackWithAllSettings();
 }
 
@@ -312,7 +324,7 @@ function stopAnalyticsMeassurement() {
 }
 
 async function saveAnalyticsMeasurements() {
-  connectionMeasurementHub
+  await connectionMeasurementHub
     .invoke("SaveMeasurementsInFolder", currentVideo, currentSettings)
     .catch(function (err) {
       console.error(err.toString());
@@ -370,11 +382,15 @@ async function playAllRepresentations(adaptationSet, abrConfig) {
 
   for (var j = 0; j < representations.length; j++) {
     //console.log(representations[j]);
-    await playRepresentation(j, abrConfig);
+    await playRepresentation(j, abrConfig, representations[j].id);
   }
 }
 
-async function playRepresentation(representationIndex, abrConfig) {
+async function playRepresentation(
+  representationIndex,
+  abrConfig,
+  representationId
+) {
   try {
     // Use a promise to wait for the PLAYBACK_ENDED event
     const playbackEndedPromise = new Promise((resolve) => {
@@ -396,7 +412,7 @@ async function playRepresentation(representationIndex, abrConfig) {
     dashjsPlayer.setQualityFor("video", representationIndex, true);
     dashjsPlayer.seek(0);
 
-    updateCurrentSettings();
+    updateCurrentSettings(representationId);
     startAnalyticsMeasurement();
     startPlayback();
 
@@ -409,7 +425,7 @@ async function playRepresentation(representationIndex, abrConfig) {
     stopPlayback();
     // Stop analytics measurement
     stopAnalyticsMeassurement();
-    saveAnalyticsMeasurements();
+    await saveAnalyticsMeasurements();
     clearMeasurements();
   }
 }
@@ -418,7 +434,7 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function updateCurrentSettings() {
+function updateCurrentSettings(representationId) {
   try {
     var streamInfo = dashjsPlayer.getActiveStream().getStreamInfo();
     var dashAdapter = dashjsPlayer.getDashAdapter();
@@ -428,10 +444,8 @@ function updateCurrentSettings() {
       "video",
       streamInfo
     );
-    var dashMetrics = dashjsPlayer.getDashMetrics();
-    var repSwitch = dashMetrics.getCurrentRepresentationSwitch("video", true);
     var currentRep = adaptation.Representation_asArray.find(function (rep) {
-      return rep.id === repSwitch.to;
+      return rep.id === representationId;
     });
     var frameRate = currentRep.frameRate;
     // round the bandwidth to kpbs
@@ -563,15 +577,16 @@ function checkDisplay() {
 // init function to run on pageload
 function init() {
   // https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod.mpd
-  var url = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
+  var url = "content/lumafilter/lumafilter.mpd";
   currentVideo = url.split("/").pop().split(".")[0];
   var videoElement = document.querySelector(".videoContainer video");
   var player = dashjs.MediaPlayer().create();
   dashjsPlayer = player;
 
   player.initialize(videoElement, url, false);
-  var controlbar = new ControlBar(player);
+  controlbar = new ControlBar(player);
   controlbar.initialize();
+
   player.updateSettings({
     streaming: {
       buffer: {
