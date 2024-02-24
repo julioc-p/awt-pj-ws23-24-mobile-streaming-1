@@ -4,6 +4,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from textwrap import wrap
 
 def process_directory(directory_path, filename_condition):
     data_combinations = set()
@@ -61,10 +62,13 @@ def plot_avg_power(avg_powers, x_label, plot_title, directory_name):
     plt.xlabel(x_label)
     plt.xticks(visible = False)
     plt.ylabel('Average Power Consumption')
-    plt.title(plot_title)
-    plt.legend()
+    ax = plt.gca()
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    ax.set_title("\n".join(wrap(plot_title, 50)))
+    lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     # turn plot into a png file
-    plt.savefig(f'{directory_name}_{plot_title}.png')
+    plt.savefig(f'{directory_name}_{plot_title}.png', bbox_inches='tight')
     plt.clf()
 
 def create_dataframe(avg_powers):
