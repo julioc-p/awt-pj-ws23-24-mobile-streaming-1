@@ -58,7 +58,11 @@ def plot_avg_power(avg_powers, x_label, plot_title, directory_name):
             height = bar.get_height()
             plt.annotate(f'{round(height, 2)}', xy=(bar.get_x() + bar.get_width() / 2, height), xytext=(0, 3),
             textcoords="offset points", ha='center', va='bottom')
-
+    margin = 0.1 
+    values = avg_powers.values()
+    y_min = min(values) - margin * (max(values) - min(values))
+    y_max = max(values) + margin * (max(values) - min(values))
+    plt.ylim(y_min, y_max)
     plt.xlabel(x_label)
     plt.xticks(visible = False)
     plt.ylabel('Average Power Consumption')
@@ -93,6 +97,7 @@ def plot_corr_heat_map(df, directory_name):
     corr = corr.abs()
     #plt.matshow(corr)
     sns.heatmap(corr, annot=True, fmt="g", cmap='viridis')
+    plt.title('Correlation Heat Map')
     # turn plot into a png file
     plt.savefig(f'{directory_name}_correlation_heat_map.png')
     plt.clf()
