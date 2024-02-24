@@ -50,23 +50,6 @@ def process_file(file_path):
     sum_power = df['TotalPower'].sum()
     return sum_power, len(df)
 
-def plot_bitrate_vs_power(codec, bitrates, sum_powers, directory_name):
-    for bitrate in bitrates:
-        sum_bitrate = 0
-        num_data_points = 0
-        for power, data_points in sum_powers[(codec, bitrate)]:
-            sum_bitrate += power
-            num_data_points += data_points
-        plt.bar(bitrate, (sum_bitrate / num_data_points), label=f'{bitrate}')
-
-    plt.xlabel('Bitrate')
-    plt.ylabel('Average Power Consumption')
-    plt.title(f'Average Power Consumption for {codec} at Different Bitrates')
-    plt.legend()
-     # turn plot into a png file
-    plt.savefig(f'{directory_name}_{codec}_bitrate_vs_power.png')
-    plt.clf()
-
 def plot_avg_power(avg_powers, x_label, plot_title, directory_name):
     for combination in avg_powers:
         bars = plt.bar(f'{combination}', avg_powers[combination], label=f'{combination}')
@@ -76,6 +59,7 @@ def plot_avg_power(avg_powers, x_label, plot_title, directory_name):
             textcoords="offset points", ha='center', va='bottom')
 
     plt.xlabel(x_label)
+    plt.xticks(visible = False)
     plt.ylabel('Average Power Consumption')
     plt.title(plot_title)
     plt.legend()
