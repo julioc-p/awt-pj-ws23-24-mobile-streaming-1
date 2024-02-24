@@ -4,7 +4,6 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
 
 def process_directory(directory_path, filename_condition):
     data_combinations = set()
@@ -22,6 +21,14 @@ def process_directory(directory_path, filename_condition):
 
     return data_combinations, sum_powers
 
+def normalize_codec(codec):
+    if codec.startswith('avc'):
+        return 'H264'
+    elif codec.startswith('hev'):
+        return 'H265'
+    else:
+        return codec
+    
 def get_avg_power(data_combinations, sum_powers):
     avg_powers = {}
     data_combinations = sorted(data_combinations)
@@ -84,13 +91,11 @@ def create_dataframe(avg_powers):
         l_tmp.append(value)
         l.append(l_tmp)
     df = pd.DataFrame(l, columns=['Resolution', 'FPS', 'Bitrate', 'Codec', 'Average Power'])
-    df["Resolution"]=df["Resolution"].astype('category').cat.codes
-    df["FPS"]=df["FPS"].astype('category').cat.codes
-    df["Bitrate"]=df["Bitrate"].astype('category').cat.codes
-    df["Codec"]=df["Codec"].astype('category').cat.codes
+    df["Resolution"] = df["Resolution"].astype('category').cat.codes
+    df["FPS"] = df["FPS"].astype('category').cat.codes
+    df["Bitrate"] = df["Bitrate"].astype('category').cat.codes
+    df["Codec"] = df["Codec"].astype('category').cat.codes
     return df
-
-import matplotlib.pyplot as plt
 
 def plot_corr_heat_map(df, directory_name):
     corr = df.corr()
@@ -105,6 +110,16 @@ def plot_corr_heat_map(df, directory_name):
     plt.clf()
 
 def generate_insight_by_settings(data_directory, directory_name):
+    """
+    Generates insights based on the settings of the data files in the given directory.
+
+    Args:
+        data_directory (str): The path to the directory containing the data files.
+        directory_name (str): The name of the directory.
+
+    Returns:
+        None
+    """
     def filename_condition(filename):
         settings = filename.split('_')[1:5]
         return '_'.join(settings)
@@ -159,6 +174,16 @@ def generate_insight_by_bitrate(data_directory, directory_name):
     plot_avg_power(avg_powers, 'Bitrate',
                    'Average Power Consumption for Different Bitrates', directory_name)
 
+def generate_insights_by_codec(data_directory, directory_name):
+    def filename_condition(filename):
+        return normalize_codec(filename.split('_')[4])
+
+    # Process files in the given directory
+    codecs, sum_powers = process_directory(data_directory, filename_condition)
+    avg_powers = get_avg_power(codecs, sum_powers)
+
+    plot_avg_power(avg_powers, 'Codec',
+                   'Average Power Consumption for Different Codecs', directory_name)
 # generate insights for all the directories in the measuredata directory
 def generate_insight_for_directories(data_directory):
     for directory in os.listdir(data_directory):
@@ -169,6 +194,7 @@ def generate_insight_for_directories(data_directory):
             generate_insight_by_resolution(directory_path, directory)
             generate_insight_by_codec_bitrate(directory_path, directory)
             generate_insight_by_bitrate(directory_path, directory)
+            generate_insights_by_codec(directory_path, directory)
 
 
 if __name__ == "__main__":
