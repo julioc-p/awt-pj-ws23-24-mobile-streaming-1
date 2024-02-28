@@ -68,6 +68,9 @@ def process_file(file_path):
         df['TotalPower'] = df['TotalPower'].str.replace(',', '.').astype(float)
     sum_power = df['TotalPower'].sum()
     return sum_power, len(df)
+def create_directory(directory_name):
+    if not os.path.exists(directory_name):
+        os.makedirs(directory_name)
 
 def plot_avg_power(avg_powers, x_label, plot_title, directory_name):
     for combination in avg_powers:
@@ -91,7 +94,7 @@ def plot_avg_power(avg_powers, x_label, plot_title, directory_name):
     lgd = plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     # turn plot into a png file
     directory_name = directory_name if directory_name else 'overall'
-    plt.savefig(f'{directory_name}_{plot_title}.png', bbox_inches='tight')
+    plt.savefig(f'Measurements/analytics_results/{directory_name}_{plot_title}.png', bbox_inches='tight')
     plt.clf()
 
 def create_dataframe(avg_powers):
@@ -220,6 +223,7 @@ def generate_overall_insights(data_directory):
 if __name__ == "__main__":
     # Path to the directory containing the data files
     data_directory = "Measurements/data"
+    create_directory(f'Measurements/analytics_results/')
 
     # Generate insights
     generate_insight_for_directories(data_directory)
