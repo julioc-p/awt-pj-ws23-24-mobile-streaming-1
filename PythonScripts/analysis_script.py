@@ -60,8 +60,8 @@ def plot_avg_power(avg_powers, x_label, plot_title, directory_name):
             textcoords="offset points", ha='center', va='bottom')
     margin = 0.1 
     values = avg_powers.values()
-    y_min = min(values) - margin * (max(values) - min(values))
-    y_max = max(values) + margin * (max(values) - min(values))
+    y_min = min(values) - margin * (max(values) - min(values) + 0.1)
+    y_max = max(values) + margin * (max(values) - min(values) + 0.1)
     plt.ylim(y_min, y_max)
     plt.xlabel(x_label)
     plt.xticks(visible = False)
@@ -115,6 +115,7 @@ def generate_insight_by_settings(data_directory, directory_name):
     """
     def filename_condition(filename):
         settings = filename.split('_')[1:5]
+        settings[3] = normalize_codec(settings[3])
         return '_'.join(settings)
 
     # Process files in the given directory
@@ -145,6 +146,7 @@ def generate_insight_by_resolution(data_directory, directory_name):
 def generate_insight_by_codec_bitrate(data_directory, directory_name):
     def filename_condition(filename):
         codec, bitrate = filename.split('_')[3:5]
+        bitrate = normalize_codec(bitrate)
         return f'{codec} x {bitrate}'
 
     # Process files in the given directory
@@ -189,6 +191,22 @@ def generate_insight_for_directories(data_directory):
             generate_insight_by_bitrate(directory_path, directory)
             generate_insights_by_codec(directory_path, directory)
 
+def generate_overall_insights(data_directory):
+    all_sum_powers = {}
+    for directory in os.listdir(data_directory):
+        directory_path = os.path.join(data_directory, directory)
+        if os.path.isdir(directory_path):
+            print(f'Processing {directory}')
+            _, sum_powers = process_directory(directory_path, lambda x: x)
+            for key in sum_powers:
+                if key not in all_sum_powers:
+                    all_sum_powers[key] = []
+                all_sum_powers[key].extend(sum_powers[key])
+    avg_powers = get_avg_power(all_sum_powers.keys(), all_sum_powers)
+    plot_avg_power(avg_powers, 'Settings (Codec_Resolution_Bitrate_FPS)',
+                   'Average Power Consumption for Different Settings', 'overall')
+    df = create_dataframe(avg_powers)
+    plot_corr_heat_map(df, 'overall')
 
 if __name__ == "__main__":
     # Path to the directory containing the data files
@@ -196,7 +214,4 @@ if __name__ == "__main__":
 
     # Generate insights
     generate_insight_for_directories(data_directory)
-    # generate_insight_by_settings(data_directory)
-    # generate_insight_by_resolution(data_directory)
-    # generate_insight_by_codec_bitrate(data_directory)
-    # generate_insight_by_bitrate(data_directory)
+    #generate_overall_insights(data_directory)
