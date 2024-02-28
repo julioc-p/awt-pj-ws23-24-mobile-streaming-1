@@ -430,10 +430,6 @@ async function playRepresentation(
   }
 }
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 function updateCurrentSettings(representationId) {
   try {
     var streamInfo = dashjsPlayer.getActiveStream().getStreamInfo();

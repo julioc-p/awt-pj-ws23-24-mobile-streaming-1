@@ -121,7 +121,8 @@ def plot_corr_heat_map(df, directory_name):
     sns.heatmap(corr, annot=True, fmt="g", cmap='viridis')
     plt.title('Correlation Heat Map')
     # turn plot into a png file
-    plt.savefig(f'{directory_name}_correlation_heat_map.png')
+    directory_name = directory_name if directory_name else 'overall'
+    plt.savefig(f'Measurements/analytics_results/{directory_name}_correlation_heat_map.png')
     plt.clf()
 
 def generate_insight_by_settings(data_directory, directory_name = None):
