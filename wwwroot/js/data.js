@@ -419,10 +419,6 @@ async function playRepresentation(
   }
 }
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 function updateCurrentSettings(representationId) {
   try {
     var streamInfo = dashjsPlayer.getActiveStream().getStreamInfo();
@@ -557,7 +553,8 @@ function checkDisplay() {
 // init function to run on pageload
 function init() {
   // https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod.mpd
-  var url = "content/lumafilter/lumafilter.mpd";
+  //var url = "content/lumafilter/lumafilter.mpd";
+  var url = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
   currentVideo = url.split("/").pop().split(".")[0];
   var videoElement = document.querySelector(".videoContainer video");
   var player = dashjs.MediaPlayer().create();
