@@ -2,8 +2,8 @@
 
 ## current progress on demo
 
-- [] tested on macOS using Apple Silicon Mac
-- [] tested on macOS using Intel Mac
+- [ ] tested on macOS using Apple Silicon Mac
+- [ ] tested on macOS using Intel Mac
 - [x] implemented for Windows devices (Intel)
 - [ ] implemented for Windows devices (AMD)
 - [x] tested on Windows
