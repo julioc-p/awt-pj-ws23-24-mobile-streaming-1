@@ -88,9 +88,8 @@ public class MeasurementProcess
         }
         else if (System.OperatingSystem.IsWindows())
         {
-            cts.Cancel();
+            cts?.Cancel();
         }
-        cts.Dispose();
     }
 
     public static async Task WaitForExitAsync()
@@ -245,14 +244,20 @@ public class MeasurementProcess
     // set cts method
     public static void set(CancellationTokenSource cts)
     {
-        MeasurementProcess.cts = cts;
+        if (cts is null)
+        {
+            throw new ArgumentNullException(nameof(cts));
+        }
+        
+        MeasurementProcess.cts = cts ;
     }
 
     // get cts method
     public static CancellationTokenSource get()
-    {
-        return MeasurementProcess.cts;
+    {   
+        return MeasurementProcess.cts ?? throw new ArgumentNullException(nameof(cts));
     }
+
     #region windows
     /// <summary>
     /// Initializes the IntelPowerGadget Library and creates a Timer that reads its measurements

@@ -6,6 +6,8 @@ using Microsoft.Win32;
 namespace awt_pj_ws23_24_mobile_streaming_1.Hubs;
 public class PythonScriptHub : Hub
 {
+    #region windows
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public async Task ExecutePythonScript()
     {
         Console.WriteLine("executing script");
@@ -58,13 +60,25 @@ public class PythonScriptHub : Hub
         }
     }
 
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     private static string GetPythonPath(string requiredVersion = "", string maxVersion = "")
     {
+
+        var cpu = new System.Management.ManagementObjectSearcher("select * from Win32_Processor")
+            .Get()
+            .Cast<System.Management.ManagementObject>()
+            .First();
+
+        if (!((string)cpu["Name"]).Contains("Intel")){
+            throw new PlatformNotSupportedException("This feature is only available on Intel CPUs");
+        }
+
         string[] possiblePythonLocations = new string[3] {
         @"HKLM\SOFTWARE\Python\PythonCore\",
         @"HKCU\SOFTWARE\Python\PythonCore\",
         @"HKLM\SOFTWARE\Wow6432Node\Python\PythonCore\"
     };
+
 
         //Version number, install path
         Dictionary<string, string> pythonLocations = new Dictionary<string, string>();
@@ -142,4 +156,5 @@ public class PythonScriptHub : Hub
 
         return "";
     }
+    #endregion windows
 }
