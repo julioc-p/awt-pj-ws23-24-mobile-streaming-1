@@ -74,10 +74,7 @@ stopAnalyticsButton.disabled = true;
 connectionMeasurementHub.on(
   "ReceiveMeasurement",
   function (totalPower, timeSinceStart) {
-    // console.log(totalPower);
     myChart.data.labels.push(timeSinceStart);
-    // console.log(myChart.data.labels);
-    // console.log(myChart.data.datasets);
     myChart.data.datasets.forEach(function (dataset) {
       dataset.data.push(totalPower);
     });
@@ -110,7 +107,6 @@ var currentSettings = "";
 
 //start connection to pythonScriptHub
 connectionPythonScriptHub.start().catch(function (err) {
-  console.log("connection to pyhub started");
   return console.error(err.toString());
 });
 
@@ -155,9 +151,7 @@ numberOfMeasurementsForm.addEventListener(
   "submit",
   function (event) {
     event.preventDefault();
-    // if (!numberOfMeasurementsForm.checkValidity()) {
     event.stopPropagation();
-    // }
     numberOfMeasurementsForm.classList.add("was-validated");
     if (numberOfMeasurementsForm.checkValidity()) {
       var inputField = document.getElementById("numberOfMeasurementsInput");
@@ -248,7 +242,6 @@ function createNewFolder(name) {
       console.error(err.toString());
     })
     .then(function () {
-      console.log("folder created");
     });
 }
 
@@ -377,11 +370,7 @@ async function startPlaybackWithAllSettings() {
 async function playAllRepresentations(adaptationSet, abrConfig) {
   const representations = adaptationSet.bitrateList;
   dashjsPlayer.setCurrentTrack(adaptationSet);
-
-  //console.log(representations);
-
   for (var j = 0; j < representations.length; j++) {
-    //console.log(representations[j]);
     await playRepresentation(j, abrConfig, representations[j].id);
   }
 }
@@ -470,9 +459,6 @@ function startAnalyticsMeasurement() {
     .send("StartMeasurementUntilEnd")
     .catch(function (err) {
       console.error(err.toString());
-    })
-    .then(function () {
-      console.log("measurement started");
     });
 }
 // method to start playback
@@ -491,9 +477,6 @@ function playbackStarted() {
     .invoke("StartPlayback")
     .catch(function (err) {
       console.error(err.toString());
-    })
-    .then(function () {
-      console.log("playback started");
     });
 }
 function playbackPaused() {
@@ -501,9 +484,6 @@ function playbackPaused() {
     .invoke("StopPlayback")
     .catch(function (err) {
       console.error(err.toString());
-    })
-    .then(function () {
-      console.log("playback paused");
     });
 }
 
@@ -587,9 +567,7 @@ function init() {
   player.updateSettings({
     streaming: {
       buffer: {
-        fastSwitchEnabled: true /* enables buffer replacement when switching bitra
-                
-                tes for faster switching */,
+        fastSwitchEnabled: true /* enables buffer replacement when switching bitrates for faster switching */,
       },
       scheduling: {
         scheduleWhilePaused: false /* stops the player from loading segments while paused */,

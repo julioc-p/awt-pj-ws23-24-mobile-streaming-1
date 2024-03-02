@@ -12,8 +12,8 @@
 
 ### Preparation:
 
-1. Install [dotnet 7](link-to-installation-guide).
-2. Make sure [Intel Power Gadget 3.6](link-to-installation-guide) (Windows/Intel) is installed.
+1. Install [dotnet 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0).
+2. Make sure Intel Power Gadget 3.6 (Windows/Intel) is installed.
 3. Make sure [libman](https://learn.microsoft.com/en-us/aspnet/core/client-side/libman/libman-cli?view=aspnetcore-7.0) is installed.
 4. Run `libman restore` to install missing packages.
 
