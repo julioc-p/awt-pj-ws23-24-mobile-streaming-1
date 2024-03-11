@@ -16,10 +16,12 @@
 2. Make sure Intel Power Gadget 3.6 (Windows/Intel) is installed.
 3. Make sure [libman](https://learn.microsoft.com/en-us/aspnet/core/client-side/libman/libman-cli?view=aspnetcore-7.0) is installed.
 4. Run `libman restore` to install missing packages.
+5. For the python script to run correctly, install the pandas, matplotlib and seaborn libraries e.g. using 'pip install pandas, matplotlib, seaborn'
 
 ### Windows (Intel)
 
 1. `dotnet restore` in the project directory.
 2. `dotnet run` in the project directory.
-3. Press on the cog button on the analytics section to save URLs or internal paths, and press the "Start Analytics" button to start the analysis, or click on the button to analyze with the default video bbb_30fps.
-4. Click on "Stop Analytics" or wait until the analysis is complete. Once finished, you can view the graphs corresponding to the data in the folder `Measurements/analytics_results`.
+3. The main functionality resides on the Demo page, accessable via button in top navigation bar
+4. Press on the cog button on the analytics section to save URLs or internal paths, and press the "Start Analytics" button to start the analysis, or click on the button to analyze with the default video bbb_30fps.
+5. Click on "Stop Analytics" or wait until the analysis is complete. Once finished, you can view the graphs corresponding to the data in the folder `Measurements/analytics_results`.
