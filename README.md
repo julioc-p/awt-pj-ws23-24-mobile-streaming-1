@@ -16,7 +16,7 @@
 2. Make sure Intel Power Gadget 3.6 (Windows/Intel) is installed.
 3. Make sure [libman](https://learn.microsoft.com/en-us/aspnet/core/client-side/libman/libman-cli?view=aspnetcore-7.0) is installed.
 4. Run `libman restore` to install missing packages.
-5. For the python script to run correctly, install the pandas, matplotlib and seaborn libraries e.g. using 'pip install pandas, matplotlib, seaborn'
+5. For the python script to run correctly, install the pandas, matplotlib and seaborn libraries e.g. using `pip install pandas, matplotlib, seaborn`
 
 ### Windows (Intel)
 
